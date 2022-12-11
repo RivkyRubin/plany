@@ -1,0 +1,107 @@
+// .app-splash-screen {
+//     background: var(--secondaryColor);
+//     position: fixed;
+//     top: 0;
+//     left: 0;
+//     right: 0;
+//     bottom: 0;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     width: 100%;
+//     height: 100%;
+//     z-index: 1;
+//     opacity: 1;
+//  }
+//  .loading-text {
+//     position: relative;
+//     color: var(--primaryColor);
+//     font-size: 5em;
+//  }
+//  .loading-text:before {
+//     content: attr(data-text);
+//     position: absolute;
+//     overflow: hidden;
+//     max-width: 7em;
+//     white-space: nowrap;
+//     color: #fff;
+//     animation: loading 8s linear;
+//  }
+//  @keyframes loading {
+//     0% {
+//        max-width: 0;
+//     }
+//  }
+.app-splash-screen{
+   z-index: 20;
+}
+.app-splash-screen:not(.full-page-mode){
+   transition: height 1s;
+   transition: height 1s;
+   background: var(--secondaryColor);
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 100%;
+   height: 74px;
+   opacity: 1;
+   
+}
+.full-page-mode{
+   transition: height 1s;
+      background: var(--secondaryColor);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      opacity: 1; 
+      .loading-text {
+          position: relative;
+          color: var(--primaryColor);
+          font-size: 5em;
+          transition: height 1s;
+       }
+       .loading-text:before {
+          content: attr(data-text);
+          position: absolute;
+          overflow: hidden;
+          max-width: 7em;
+          white-space: nowrap;
+          color: rgb(0, 0, 0);
+          animation: loading 3s linear;
+       }
+       @keyframes loading {
+          0% {
+             max-width: 0;
+          }
+       }
+   }
+
+
+.loading-text {
+   position: relative;
+   color: var(--primaryColor);
+   font-size: 2em;
+   transition: font-size 1s;
+   line-height: normal;
+}
+.loading-text:before {
+   content: attr(data-text);
+   position: absolute;
+   overflow: hidden;
+   max-width: 7em;
+   white-space: nowrap;
+   color: rgb(0, 0, 0);
+   animation: loading 8s linear;
+}

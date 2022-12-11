@@ -1,0 +1,36 @@
+.footer {
+    .footer-action {
+      text-align: center;
+      font-size: 30px;
+      color: var(--primaryColor);
+      animation: fadeUp .5s
+    }
+
+    border-top: 1px solid var(--primaryColor);
+  }
+  
+  @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  
+    @keyframes fadeUp {
+      0% {
+      filter: alpha(opacity=0);
+      opacity: 0;
+      -webkit-transform: translateY(50%);
+      -moz-transform: translateY(50%);
+      -ms-transform: translateY(50%);
+      -o-transform: translateY(50%);
+      transform: translateY(50%);
+  }
+  100% {
+      filter: alpha(opacity=100);
+      opacity: 1;
+      -webkit-transform: translateY(0);
+      -moz-transform: translateY(0);
+      -ms-transform: translateY(0);
+      -o-transform: translateY(0);
+      transform: translateY(0);
+  }
+  }

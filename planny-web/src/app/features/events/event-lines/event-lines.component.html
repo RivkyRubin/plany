@@ -1,0 +1,48 @@
+
+<div *ngIf="eventSub | async as event" class="flex-parent">
+  <a  [routerLink]="['../']" class="btn-link">Back to Event Details</a>
+  <div class="flex-content">
+  <div *ngFor="let group of event.eventGroups" class=" card mb-3">
+    <div class="p-3 card-title gradient-underline">
+      <button  (click)="editGroup(group)" class="btn btn-link p-1"> <fa-icon [icon]="faBars" class="pe-2"></fa-icon></button>
+   
+      <span class="mb-1 gradient-underline9">{{ group.groupName }}</span>
+    </div>
+    <div class="card-body">
+    <div *ngFor="let line of group.eventGroupLines" class="ps-1">
+      <div >
+        <button  (click)="editLine(line)" class="btn btn-link p-1"> <fa-icon [icon]="faBars" class="pe-2"></fa-icon></button>
+        <mat-checkbox [checked]="line.isDone"  (change)="onChangeCheckbox($event,line)" class="" color="primary">{{
+          line.name
+        }}</mat-checkbox>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+  <form class="input-group flex-narrow"  [formGroup]="addLineForm" (ngSubmit)="addLine(event)">
+    <input type="text" class="form-control" formControlName="line" placeholder="add to list" required aria-label="Dollar amount (with dot and two decimal places)">
+    <span class="input-group-text p-0"> 
+        <mat-form-field appearance="fill" class="m-0">
+            <mat-label>Category</mat-label>
+
+            <mat-select #mySelect [(value)]="selectedCategory">
+              <mat-option *ngFor="let group of event.eventGroups" [value]="group.id">
+                {{group.groupName}}
+              </mat-option>
+              <mat-option [disabled]="true" class="horizonal mat-new-category">
+
+                <input type="text" placeholder="add a new category" name="category-add" class="flex-content border-0 shadow-none" [ngModelOptions]="{standalone: true}" [(ngModel)]="newGroup" />
+                <button class="btn btn-outline-primary flex-narrow " (click)="addGroup()" [disabled]="newGroup==''">Add</button>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+    </span>
+    <span class="input-group-text"><button [disabled]="addLineForm.invalid" class="btn btn-primary" type="submit">
+        <fa-icon [icon]="faPlus"></fa-icon>
+      </button>
+    </span>
+    </form>
+</div>
+

@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-sm-6">
+    <form class="form-signin" [formGroup]="signinForm" (ngSubmit)="loginUser()">
+      <h1 class="h3 mb-3 font-weight-normal text-center title">Sign in</h1>
+      <div class="form-floating mb-3">
+        <input
+          type="email"
+          class="form-control"
+          id="floatingInput"
+          placeholder="name@example.com"
+          required
+          email
+          formControlName="email"
+        />
+        <label for="floatingInput">Email address</label>  
+          <small class="text-danger" *ngIf="signinForm.get('email')?.touched && signinForm.get('email')?.errors?.email">Email address is invalid</small> 
+          <small class="text-danger" *ngIf="signinForm.get('email')?.touched &&signinForm.get('email')?.errors?.required">Email address is required</small> 
+      </div>
+     
+      <div class="form-floating mb-3">
+        <input
+          type="password"
+          class="form-control"
+          id="floatingPassword"
+          placeholder="Password"
+          required
+          formControlName="password"
+        />
+        <label for="floatingPassword">Password</label>
+        <small class="text-danger" *ngIf="signinForm.get('password')?.touched && signinForm.get('password')?.errors?.minlength">Password is invalid</small> 
+        <small class="text-danger" *ngIf="signinForm.get('password')?.touched &&signinForm.get('password')?.errors?.required">Password is required</small> 
+
+      </div>
+      <button
+        type="submit"
+        class="btn btn-block btn-primary"
+        [disabled]="!signinForm.valid"
+      >
+        Sign in
+      </button>
+    </form>    
+      <button (click)="openForgotPasswordDialog()" class="btn btn-link">Forgot password</button> 
+      <asl-google-signin-button type="standard" size="large" ></asl-google-signin-button>
+  </div>
+  <div class="col-sm-6">
+    <img src="/assets/images/login.svg" class="w-100" />
+  </div>
+</div>

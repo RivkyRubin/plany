@@ -1,0 +1,169 @@
+  // @use '@angular/material' as mat;
+  @import "~bootstrap/scss/mixins/_breakpoints";
+:root {
+  --primaryColor: #FB2576;//hsl(185, 57%, 35%); //#26848C
+  --primaryLightColor:#fff6f9; //#cfe2e4;
+  --secondaryColor: hsl(0, 0%, 22%);
+  --textOnPrimary: hsl(0, 0%, 100%);
+  --textOnSecondary: hsl(0, 0%, 90%);
+  --background: hsl(0, 0%, 100%);
+  --lightPrimaryColor: hsl(186, 16%, 77%);
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+}
+
+h1.title{
+  font-size: 50px;
+    font-weight: 800;
+    line-height: 72px;
+    margin: 0 0 24px;
+    color:var(--primaryColor);
+    text-align: center;
+}
+
+.btn-primary,
+.mat-step-header .mat-step-icon-selected,
+.mat-step-header .mat-step-icon-selected,
+.mat-checkbox-indeterminate.mat-primary .mat-checkbox-background,
+.mat-checkbox-checked.mat-primary .mat-checkbox-background {
+  background-color: var(--primaryColor) !important;
+  border-color:var(--primaryColor) !important;
+}
+.btn-link{
+  color:var(--primaryColor) !important;
+}
+.btn-outline-primary{
+  border-color:var(--primaryColor) !important;
+  color:var(--primaryColor) !important;
+
+}
+.btn-outline-primary.active{
+    --bs-btn-active-bg: var(--primaryColor) !important;
+    color:#fff !important;
+}
+.btn-outline-primary:hover{
+  background-color:var(--primaryColor) !important;
+  color:#fff !important;
+}
+/* Importing Bootstrap SCSS file. */
+@import "~bootstrap/scss/bootstrap";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  // font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: "ShanderaRegular", "Helvetica Neue", sans-serif;
+}
+
+// .flex-parent {
+//   display: flex !important;
+//   flex-flow: column;
+//   height: 100%;
+// }
+// .flex-parent.horizonal {
+//   display: flex !important;
+//   flex-flow: row;
+//   height: 100%;
+// }
+// .flex-header,
+// .flex-narrow {
+//   flex: 0 1 auto;
+//   /* The above is shorthand for:
+//     flex-grow: 0,
+//     flex-shrink: 1,
+//     flex-basis: auto
+//     */
+// }
+
+// .flex-content {
+//   flex: 1 1 auto;
+//   position: relative;
+//   overflow: auto !important;
+//   overflow-y: hidden;
+// }
+
+// .flex-footer {
+//   flex: 0 1 40px;
+// }
+
+.mat-ink-bar {
+  background-color: var(--primaryColor) !important;}
+
+.mat-dialog-container{
+  position:relative;
+}
+
+    .mat-simple-snackbar {
+      font-size: 1.2rem;
+    }
+    .mat-snack-bar-container
+    {
+      .mat-button-wrapper{
+        color:rgb(205, 205, 205);
+      }
+    }
+    .mat-snack-bar-container.warning {
+      background-color: rgb(255, 102, 0) !important;
+    }
+    .mat-snack-bar-container.error {
+      background-color: rgb(255, 0, 0) !important;
+    }
+    .mat-snack-bar-container.success {
+      background-color: var(--primaryColor) !important;
+    }
+    
+  
+
+
+@font-face {
+  font-family: "Ubuntu";
+  src: local("Ubuntu"), url(./assets/fonts/Ubuntu-Regular.ttf) format("truetype");
+}
+
+
+
+
+// .mat-typography {
+//   font: 400 14px/20px "ShanderaRegular", "Helvetica Neue", sans-serif;
+// }
+
+* {
+  font-family: "Ubuntu", sans-serif !important; 
+  /* Add !important to overwrite all elements */
+}
+
+.display-1{
+  font-size: calc(1.625rem + 4.5vw) !important;
+  font-weight: 300 !important;
+  line-height: 1.2 !important; 
+}
+
+.glass-bg{
+  /* From https://css.glass */
+background: rgba(255, 255, 255, 0.2) !important;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+backdrop-filter: blur(5px) !important;
+-webkit-backdrop-filter: blur(5px) !important;
+border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@include media-breakpoint-down(sm,(
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+)) {
+  h1.title{
+    line-height: 1;
+    margin-bottom: 0px !important;
+  }
+}

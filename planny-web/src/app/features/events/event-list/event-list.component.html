@@ -1,0 +1,49 @@
+<div *ngIf="!isEmptyList">
+  <h1 text-center class="title">My Events</h1>
+  <div class="row gy-3 pb-3" [hidden]="!isReady">
+    <div
+      *ngFor="let event of eventsSub$ | async"
+      class="column col-xs-6 col-sm-4 col-lg-3"
+    >
+      <div class="card text-center position-relative">
+        <app-figure-img
+          [src]="
+            '/assets/images/' + (event?.eventType?.name || 'custom') + '.jpg'
+          "
+          [alt]="'/assests/images/custom.jpg'"
+        ></app-figure-img>
+        <div class="card-body">
+          <h2 class="card-title">{{ event.name }}</h2>
+          <div class="position-absolute event-type">
+            {{ event?.eventType?.name || "Custom" }}
+          </div>
+          <p class="card-text">{{ event.date | date : "d/MM/yyyy H:mm" }}</p>
+
+          <div class="d-grid gap-2 col-10 mx-auto">
+            <a
+              [routerLink]="['/events/event', event.id]"
+              class="btn btn-primary show-event-btn border-0"
+              >Open event</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isEmptyList" class="empty-list h-100 flex-parent">
+  <h1 text-center class="title flex-narrow mb-0">My Events</h1>
+  <div class="d-flex justify-content-center flex-content">
+    <div class="align-self-center text-center">
+      <img src="/assets/images/empty.svg" class="" />
+      <h2 class=" ">Create your first event!</h2>
+      <!-- <div class="position-absolute bottom-0 end-0 arrow-img">
+  <img src="/assets/images/arrow.png" alt="...">
+</div> -->
+    </div>
+  </div>
+</div>
+<a class="fload-add" [routerLink]="['event-create']">
+  <fa-icon [icon]="faPlus"></fa-icon>
+</a>

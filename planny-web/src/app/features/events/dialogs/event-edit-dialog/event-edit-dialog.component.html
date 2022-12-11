@@ -1,0 +1,21 @@
+
+<h2 mat-dialog-title>Edit Event</h2>
+
+<form [formGroup]="editForm">
+  <mat-dialog-content class="mat-typography">
+    <div class="form-floating mb-3">
+    <input type="text" name="name" formControlName="name" class="form-control" id="floatingInput"/>
+    <label for="floatingInput">Name</label> 
+    <small class="text-danger" *ngIf="editForm.get('name')?.touched &&editForm.get('name')?.errors?.required">Name is required</small> 
+  </div>
+  <div class="form-floating mb-3">
+    <input  type="datetime-local" class="form-control" id="floatingDate" placeholder="date" required  formControlName="date" >
+    <label for="floatingDate">Date</label>
+  </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close class="btn btn-outline-secondary me-1">Cancel</button>
+       <button mat-button (click)="save()" [disabled]="!editForm.valid || editForm.pristine" cdkFocusInitial class="btn btn-primary">Save</button>
+  
+  </mat-dialog-actions>
+  </form>

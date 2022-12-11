@@ -1,0 +1,75 @@
+<!-- <form class="form-signin" [formGroup]="createForm" (ngSubmit)="create()">
+    <h3 class="h3 mb-3 font-weight-normal text-center">Create a new event</h3>
+    <div class="form-floating mb-3">
+      <input type="email" class="form-control" id="floatingInput" placeholder="name" required formControlName="name">
+      <label for="floatingInput">Name</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="date" class="form-control" id="floatingDate" placeholder="date" required  formControlName="date" >
+      <label for="floatingDate">Date</label>
+    </div>
+    <button type="submit" class="btn btn-block btn-primary" [disabled]="!createForm.valid">Create Event</button>
+  </form> -->
+  <div class="flex-parent">
+<h1 class=" title h3 mb-3 font-weight-normal text-center flex-header">Create a new event</h1>
+  <!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+    {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+  </button> -->
+  <mat-stepper [linear]="isLinear" #stepper class="flex-content flex-parent">
+    <mat-step [stepControl]="firstFormGroup" class="" >
+        <form class="form-signin flex-content" [formGroup]="createForm" >
+            <ng-template matStepLabel>Event Details</ng-template>
+             <div class="form-floating mb-3">
+              <input  type="email" class="form-control" id="floatingInput" placeholder="name" required formControlName="name">
+              <label for="floatingInput">Name</label>
+              <small class="text-danger" *ngIf="createForm.get('name')?.touched &&createForm.get('name')?.errors?.required">Name is required</small> 
+            </div>
+            <div class="form-floating mb-3">
+              <input  type="datetime-local" class="form-control" id="floatingDate" placeholder="date" required  formControlName="date" >
+              <label for="floatingDate">Date</label>
+            </div>
+            <!-- <button mat-button matStepperNext class="btn btn-light float-end fixed-bottom" [disabled]="!createForm.valid">Next</button> -->
+              </form>
+              <button mat-button matStepperNext class="btn btn-primary float-end fixed-bottom9 flex-narrow " [disabled]="!createForm.valid">Next</button>
+
+      <!-- <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Fill out your name</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form> -->
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" label="Event Template">
+      <h2 class="text-center"> <fa-icon [icon]="faInfo"></fa-icon> You can choose an initial template (optional)</h2>
+      <form [formGroup]="secondFormGroup" class="flex-content">
+        <!-- <mat-form-field appearance="fill">
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
+                 required>
+        </mat-form-field> -->
+        <app-event-type-list (selectEventTypeEvent)="selectEventType($event)" class="pb-5"></app-event-type-list>
+      </form> 
+      <div class="bg-white p-3  flex-narrow">
+          <button mat-button matStepperPrevious class="btn btn-light me-1">Back</button>
+          <button mat-button matStepperNext class="btn btn-primary float-end" >Next</button>
+        </div>
+    </mat-step>
+    <mat-step>
+      <div class="flex-content">
+      <ng-template matStepLabel>Done</ng-template>
+      <p>That's it! you can create your event</p>
+      
+      </div>
+      <div class="flex-narrow p-3 bg-white">
+        <button mat-button  class="btn btn-block btn-primary float-end" [disabled]="!createForm.valid" (click)="create()">Create</button>
+        <!-- <button type="submit" class="btn btn-block btn-primary" [disabled]="!createForm.valid">Create Event</button> -->
+        <button mat-button matStepperPrevious class="btn btn-light">Back</button>
+        <!-- <button mat-button (click)="stepper.reset();createForm.reset()" class="btn btn-light">Reset</button> -->
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>

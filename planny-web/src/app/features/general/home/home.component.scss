@@ -1,0 +1,110 @@
+@import "~bootstrap/scss/mixins/_breakpoints";
+.content {
+  font-weight: bold;
+  color: var(--primaryLightColor);
+  background-image: url(/assets/images/events.jpg);
+  background-size: cover;
+  background-attachment: fixed;
+  .title {
+    font-size: 5rem;
+    line-height: 3.5rem;
+    animation: 
+     letterSpace 1.5s forwards;
+      animation-delay: 2s;
+     //letter-spacing: 10px;
+     opacity: 0;
+    ;
+  }
+}
+.card{
+  margin: 15px 0px;
+  // padding:15px;
+  background-color:var(--primaryLightColor);
+  color:var(--primaryColor);
+  .img-col{
+    padding:15px;
+    background-color:#fff;
+  }
+}
+.step{
+  // border-bottom: 1px solid var(--primaryColor);
+    // padding: 15px;
+    @extend .fade-up;
+    font-size:20px;
+}
+.fade-up{
+  animation: fadeUp 1s;
+}
+.fade-down{
+  animation: fadeDown 1s;
+}
+
+@keyframes fadeUp {
+  0% {
+  filter: alpha(opacity=0);
+  opacity: 0;
+  -webkit-transform: translateY(50%);
+  -moz-transform: translateY(50%);
+  -ms-transform: translateY(50%);
+  -o-transform: translateY(50%);
+  transform: translateY(50%);
+}
+100% {
+  filter: alpha(opacity=100);
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  transform: translateY(0);
+}
+}
+
+@include media-breakpoint-down(sm,(
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+)) {
+ 
+  .card{
+    border:none;
+    border-radius: 0px;
+    background-color: unset;
+  }
+}
+
+
+@keyframes letterSpace {
+  0% {
+    opacity: 0;
+  letter-spacing: 100px;
+}
+100% {
+  opacity: 1;
+  letter-spacing: 1px;
+}
+}
+
+@keyframes fadeDown {
+  0% {
+  filter: alpha(opacity=0);
+  opacity: 0;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+100% {
+  filter: alpha(opacity=100);
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  transform: translateY(0);
+}
+}

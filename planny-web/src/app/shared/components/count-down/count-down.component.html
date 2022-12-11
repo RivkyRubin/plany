@@ -1,0 +1,16 @@
+
+<div class="timer">
+    <h4> Count down timer </h4>
+    <div *ngIf="timeDifference>0; else count0">
+    <span id="days"> {{daysToDday}}</span>Day{{(daysToDday>1)?'s':''}}
+    <span id="hours"> {{hoursToDday}}</span>Hrs 
+    <span id="minutes"> {{minutesToDday}}</span>Min
+    <span id="seconds"> {{secondsToDday}}</span>S
+    </div>
+<fa-icon [icon]="faClock" class="top-0 start-0  p-1 fa-xl position-absolute top-0 start-0"></fa-icon>
+</div>
+
+
+<ng-template #count0>
+    The event was so fun!
+  </ng-template>

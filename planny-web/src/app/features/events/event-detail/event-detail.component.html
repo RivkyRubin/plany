@@ -1,0 +1,20 @@
+<div *ngIf="event$ | async as event" class="flex-parent">
+  <div class="flex-content">
+    <div class="row m-0">
+      <div class=" col-sm-6">
+        <img
+          src="/assets/images/{{ (event$ | async)?.eventType?.name || 'custom' }}.jpg"
+          class="card-img-top p-3"
+          alt="..."
+        />
+      </div>
+      <div class="col text-center">
+        <h3>{{ event.date | date: "d/MM/yyyy H:mm" }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="flex-narrow">
+  <app-count-down [dDay]="getEventDate(event.date)" class="m-3">
+  </app-count-down>
+</div>
+</div>

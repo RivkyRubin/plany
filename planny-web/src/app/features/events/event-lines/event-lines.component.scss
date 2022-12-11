@@ -1,0 +1,44 @@
+// @import '/src/styles.scss';
+@import '/src/app/styles/layout.scss';
+.gradient-underline {
+    position: relative;
+    font-size:20px;
+}
+
+.gradient-underline::after {
+    background: var(--primaryColor);
+    background: linear-gradient(to right, var(--primaryColor) 0%, transparent 100%);
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+ }
+ ::ng-deep{
+ .mat-form-field-underline{
+    display: none;
+ }
+ .mat-form-field-wrapper{
+    padding-bottom:0px;
+ }
+ .mat-checkbox-checked .mat-checkbox-label{
+    text-decoration: line-through;
+}
+
+}
+form{
+    margin:10px 0px;
+}
+
+.mat-new-category {
+    padding-top:5px;
+    padding-bottom:5px;
+    ::ng-deep .mat-option-text{
+        @extend .flex-parent !optional;
+        @extend .horizonal !optional;
+    }
+    input:focus{
+        outline-color: rgb(207, 207, 207);
+    }
+}

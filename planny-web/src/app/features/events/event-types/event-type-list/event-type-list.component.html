@@ -1,0 +1,50 @@
+<div class="container-fluid">
+  <mat-tab-group class="flex-narrow">
+    <mat-tab label="Templates">
+      <div class="row">
+        <div
+          *ngFor="let eventType of eventTypes$ | async"
+          class="column col-xs-6 col-sm-4 col-lg-3 mb-3"
+        >
+          <div class="card">
+            <mat-checkbox
+              [checked]="selectedEventType?.id == eventType.id"
+              (change)="selectEventType(eventType)"
+              class="p-3"
+              color="primary"
+              >{{ eventType.name }}</mat-checkbox
+            >
+            <!-- <img src="/assets/images/{{eventType?.name}}.svg" class="card-img-top p-3" alt="/assets/images/birthday.jpg" onerror="this.src='/assets/images/birthday.svg';"> -->
+            <app-figure-img
+              [src]="'/assets/images/' + eventType?.eventType?.name + '.jpg'"
+              [alt]="'/assets/images/custom.jpg'"
+            ></app-figure-img>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="My Events">
+      <div class="row">
+        <div
+          *ngFor="let eventType of userEvents$ | async"
+          class="column col-xs-6 col-sm-4 col-lg-3 mb-3"
+        >
+          <div class="card">
+            <mat-checkbox
+              [checked]="selectedEventType?.id == eventType.id"
+              (change)="selectEventType(eventType)"
+              class="p-3"
+              color="primary"
+              >{{ eventType.name }}</mat-checkbox
+            >
+            <!-- <img src="/assets/images/{{eventType?.name}}.svg" class="card-img-top p-3" alt="/assets/images/birthday.jpg" onerror="this.src='/assets/images/birthday.svg';"> -->
+            <app-figure-img
+              [src]="'/assets/images/' + eventType?.eventType?.name + '.jpg'"
+              [alt]="'/assets/images/custom.jpg'"
+            ></app-figure-img>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

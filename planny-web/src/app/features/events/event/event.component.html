@@ -1,0 +1,38 @@
+<div *ngIf="eventSub$ | async as event" class="flex-parent">
+  <h1 class="text-center title">{{ event.name }}</h1>
+  <!-- <div class="row m-0">
+        <div class="col-md-3 col-sm-6">
+          <img
+            src="/assets/images/{{ (event$ | async)?.eventType?.name }}.svg"
+            onerror="this.src='/assets/images/birthday.svg';"
+            class="card-img-top p-3"
+            alt="..."
+          />
+        </div>
+        <div class="col text-center">
+          <h2>{{ event.name }}</h2>
+          <h3>{{ event.date | date: "d/MM/yyyy H:mm" }}</h3>
+        </div>
+      </div>  -->
+  <div class="flex-content">
+    <router-outlet (activate)="onOutletLoaded($event)"></router-outlet>
+  </div>
+  <div class="flex-narrow">
+    <div class="footer row bg-light">
+      <div class="col footer-action btn btn-link" (click)="openDeleteDialog()">
+        <fa-icon [icon]="faTrash"></fa-icon>
+      </div>
+      <div class="col footer-action btn btn-link" (click)="openEditDialog()">
+        <fa-icon [icon]="faEdit"></fa-icon>
+      </div>
+      <div class="col footer-action btn btn-link">
+        <a [routerLink]="['./lines']" class="text-decoration-none text-reset"
+          ><fa-icon [icon]="faList"></fa-icon
+        ></a>
+      </div>
+      <div class="col footer-action btn btn-link" (click)="openFriendsDialog()">
+        <fa-icon [icon]="faUserGroup"></fa-icon>
+      </div>
+    </div>
+  </div>
+</div>

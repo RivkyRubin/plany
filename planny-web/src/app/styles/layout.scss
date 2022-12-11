@@ -1,0 +1,25 @@
+.flex-parent {
+  display: flex !important;
+  flex-flow: column;
+  height: 100%;
+}
+.flex-parent.horizonal {
+  display: flex !important;
+  flex-flow: row;
+  height: 100%;
+}
+.flex-header,
+.flex-narrow {
+  flex: 0 1 auto;
+}
+
+.flex-content {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: auto !important;
+  overflow-y: hidden;
+}
+
+.flex-footer {
+  flex: 0 1 40px;
+}
