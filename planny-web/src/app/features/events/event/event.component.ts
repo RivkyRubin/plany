@@ -8,7 +8,7 @@ import { EventAPIService } from '../services/event/event-api.service';
 import {
   faUserGroup,
   faListOl,
-  faTrash,
+  faInfoCircle,
   faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,7 +30,7 @@ export class EventComponent implements OnInit {
   eventObs$ = this.eventSub$.asObservable();
   faUserGroup = faUserGroup;
   faList = faListOl;
-  faTrash = faTrash;
+  faDetails = faInfoCircle;
   faEdit = faEdit;
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +38,7 @@ export class EventComponent implements OnInit {
     private eventTypeAPIService: EventTypeApiService,
     public dialog: MatDialog,
     private toaster: ToasterService,
-    private router: Router
+    public router: Router
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +96,9 @@ export class EventComponent implements OnInit {
         return;
       if (result.data.action == 'Save') {
         this.eventSub$.next(result.data.data);
+      }
+      else if (result.data.action == 'Delete') {
+        this.openDeleteDialog();
       }
     });
   }

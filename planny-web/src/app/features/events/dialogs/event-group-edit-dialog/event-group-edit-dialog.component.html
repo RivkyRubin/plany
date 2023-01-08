@@ -11,8 +11,8 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close class="btn btn-outline-secondary me-1">Cancel</button>
+    <button mat-button (click)="save()" [disabled]="!editForm.valid || editForm.pristine" cdkFocusInitial class="btn btn-primary">Save</button>
     <button mat-button (click)="delete()" cdkFocusInitial class="btn btn-link position-absolute delete">        <fa-icon [icon]="faTrash"></fa-icon></button>
-     <button mat-button (click)="save()" [disabled]="!editForm.valid || editForm.pristine" cdkFocusInitial class="btn btn-primary">Save</button>
   
   </mat-dialog-actions>
   </form>

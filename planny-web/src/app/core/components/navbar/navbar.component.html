@@ -1,6 +1,9 @@
 <nav class="navbar navbar-light bg-light" ngbDropdown>
-  <a data-text="Plany" class="loading-text navbar-brand"[routerLink]="['']" >Plany </a>
-  <button [@enterAnimation]="state"
+  <a data-text="Plany" class="loading-text navbar-brand" [routerLink]="['']"
+    >Plany
+  </a>
+  <button
+    [@enterAnimation]="state"
     type="button"
     class="btn default abs-btn"
     id="dropdownBasic1"
@@ -8,16 +11,18 @@
   >
     <span class="navbar-toggler-icon"></span>
   </button>
-  <span class="signin"*ngIf="!(this.authService.isLoggedIn | async)"  [@enterAnimation]="state">
+  <span
+    class="signin"
+    *ngIf="!(this.authService.isLoggedIn | async)"
+    [@enterAnimation]="state"
+  >
     <a
-      
       class="btn btn-outline-primary"
       routerLinkActive="active"
       routerLink="/login"
       >Sign in</a
     >
     <a
-    
       class="btn btn-outline-primary"
       routerLinkActive="active"
       routerLinkActive="active"
@@ -26,46 +31,63 @@
     >
   </span>
   <div
-    class="collapse navbar-collapse p-0 m-0" [@enterAnimation]="state"
+    class="collapse navbar-collapse p-0 m-0"
+    [@enterAnimation]="state"
     ngbDropdownMenu
     aria-labelledby="dropdownBasic1"
   >
     <ul class="navbar-nav">
       <li class="nav-item glass-bg">
-        <a class="dropdown-item" [routerLink]="['']" [routerLinkActive]="['is-active']" [routerLinkActiveOptions]="{exact:true}">Home</a>
-      </li>
-      <li class="nav-item glass-bg"  *ngIf="this.authService.isLoggedIn | async">
         <a
-        
           class="dropdown-item"
-          [routerLink]="['/user-profile']"
+          [routerLink]="['']"
           [routerLinkActive]="['is-active']"
-          >User Profile</a>
-      </li>
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Home</a
+        >
+      </li> 
       <li class="nav-item glass-bg" *ngIf="this.authService.isLoggedIn | async">
-        <a  
+        <a
           class="dropdown-item"
           [routerLink]="['/events']"
           [routerLinkActive]="['is-active']"
           >My Events</a
         >
       </li>
-      <li class="nav-item glass-bg" *ngIf="this.authService.isLoggedIn | async">
-        <button
-     
-      class="dropdown-item" 
-      (click)="logout()"
-    >
-      Logout
-    </button>
+      <!-- <li class="nav-item glass-bg" *ngIf="this.authService.isLoggedIn | async">
+        <a
+          class="dropdown-item"
+          [routerLink]="['/user-profile']"
+          [routerLinkActive]="['is-active']"
+          >User Profile</a
+        >
+      </li>   -->
+      <li class="nav-item glass-bg" *ngIf="this.authService.hasRole('Admin')">
+        <a
+          class="dropdown-item"
+          [routerLink]="['/admin']"
+          [routerLinkActive]="['is-active']"
+          >Admin</a
+        >
       </li>
       <li class="nav-item glass-bg">
-        <a  
-        class="dropdown-item"
-        [routerLink]="['/about']"
-        [routerLinkActive]="['is-active']"
-        >About</a
-      >
+        <a
+          class="dropdown-item"
+          [routerLink]="['/about']"
+          [routerLinkActive]="['is-active']"
+          >About</a
+        >
+      </li>
+      <li class="nav-item glass-bg">
+        <a
+          class="dropdown-item"
+          [routerLink]="['/terms-of-use']"
+          [routerLinkActive]="['is-active']"
+          >Terms of use</a
+        >
+      </li>
+      <li class="nav-item glass-bg" *ngIf="this.authService.isLoggedIn | async">
+        <button class="dropdown-item" (click)="logout()">Logout</button>
       </li>
     </ul>
   </div>

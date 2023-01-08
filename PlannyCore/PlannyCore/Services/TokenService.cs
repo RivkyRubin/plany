@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Auth;
 using Microsoft.IdentityModel.Tokens;
+using PlannyCore.Controllers;
 using PlannyCore.Models.Account;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,29 +16,33 @@ namespace PlannyCore.Services
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
         Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(ExternalAuthRequest externalAuth);
     }
-    public class TokenService:ITokenService
+    public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<TokenService> _logger;
 
-        public TokenService(IConfiguration configuration)
+        public TokenService(IConfiguration configuration, ILogger<TokenService> logger)
         {
             _configuration = configuration;
+            _logger = logger;
+
         }
 
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var jwt = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims, //the user's claims, for example new Claim[] { new Claim(ClaimTypes.Name, "The username"), //... 
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddMinutes(60),
                 signingCredentials: credentials
             );
-
+            _logger.LogInformation($"Generating a new token. issuer: {jwt.Issuer}, audience: {String.Join(",", jwt.Audiences.ToList())}");
             return new JwtSecurityTokenHandler().WriteToken(jwt); //the method is called WriteToken but returns a string
         }
 

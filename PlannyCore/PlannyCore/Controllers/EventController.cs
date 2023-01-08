@@ -49,5 +49,23 @@ namespace PlannyCore.Controllers
             var result = await _eventService.GetUserTemplates(user.Id);
             return new OkObjectResult(result);
         }
+
+        public override async Task<ActionResult> Post([FromBody] EventModel model)
+        {
+            if (model.IsTemplate.HasValue && !await HasRole("Admin"))
+            {
+                model.IsTemplate = null;
+            }
+            return await base.Post(model);
+        }
+        public override async Task<ActionResult> Put(int id,[FromBody] EventModel model)
+        {
+            if (model.IsTemplate.HasValue && !await HasRole("Admin"))
+            {
+                model.IsTemplate = null;
+            }
+            return await base.Put(id,model);
+        }
     }
+
 }

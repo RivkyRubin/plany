@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { faPlus, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faListDots } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { BaseApiService } from 'src/app/core/services/base-api.service';
 import { IEventGroup } from '../models/event-group.model';
@@ -16,7 +16,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EventGroupEditDialog } from '../dialogs/event-group-edit-dialog/event-group-edit-dialog.component';
 import { DeleteDialogComponent } from '../dialogs/delete-dialog/delete-dialog.component';
 import { EventGroupLineEditDialog } from '../dialogs/event-group-line-edit-dialog/event-group-line-edit-dialog.component';
-import * as cloneDeep from 'lodash/cloneDeep';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { preventOverflow } from '@popperjs/core';
+
 @Component({
   selector: 'app-event-lines',
   templateUrl: './event-lines.component.html',
@@ -25,6 +27,7 @@ import * as cloneDeep from 'lodash/cloneDeep';
 export class EventLinesComponent implements OnInit {
   faPlus = faPlus;
   faBars = faEdit;
+  faDots = faListDots;
   newGroup: string = '';
   id: number;
   addLineForm: FormGroup;
@@ -71,10 +74,10 @@ export class EventLinesComponent implements OnInit {
     var event = this.getCurrentEvent();
     this.eventGroupApiService
       .create({ groupName: this.newGroup, eventId: event.id })
-      .subscribe((newGroupId) => {
+      .subscribe((createdGroup) => {
         this.toaster.success('Added category');
-        event.eventGroups?.push({ id: newGroupId, groupName: this.newGroup });
-        this.selectedCategory = newGroupId;
+        event.eventGroups?.push(createdGroup);
+        this.selectedCategory = createdGroup.id!;
         this.eventSub.next(event);
         this.newGroup = '';
         this.mySelect.close();
@@ -82,6 +85,11 @@ export class EventLinesComponent implements OnInit {
   }
 
   addLine(event: IEvent): void {
+    if (
+      this.addLineForm.value.line == null ||
+      this.addLineForm.value.line == ''
+    )
+      return;
     var selectedGroupInd =
       event.eventGroups?.findIndex((x) => x.id == this.selectedCategory) ?? -1;
     if (selectedGroupInd != null && selectedGroupInd > -1) {
@@ -92,12 +100,8 @@ export class EventLinesComponent implements OnInit {
           name: this.addLineForm.value.line,
           eventGroupId: this.selectedCategory,
         })
-        .subscribe((newLineId) => {
-          event.eventGroups![selectedGroupInd].eventGroupLines?.push({
-            id: newLineId,
-            name: this.addLineForm.value.line,
-            eventGroupId: this.selectedCategory,
-          });
+        .subscribe((createdGroupLine) => {
+          event.eventGroups![selectedGroupInd].eventGroupLines?.push(createdGroupLine);
           this.eventSub.next(event);
           this.toaster.success('Added new item to list');
           this.addLineForm.reset();
@@ -114,7 +118,7 @@ export class EventLinesComponent implements OnInit {
     this.eventGroupLineApiService
       .update(line.id, line)
       .subscribe((newLineId) => {
-        this.toaster.success('Changed checkbox value');
+        this.toaster.success('Updated Successfully');
       });
   }
 
@@ -137,13 +141,15 @@ export class EventLinesComponent implements OnInit {
     });
   }
 
-  private updateGroup( editedEventGroup: IEventGroup,eventGroup: IEventGroup) {
-    this.eventGroupApiService.update(eventGroup.id, editedEventGroup).subscribe({
-      next: (value) => {
-        eventGroup.groupName = editedEventGroup.groupName;
-        this.toaster.success('Updated successfully');
-      },
-    });
+  private updateGroup(editedEventGroup: IEventGroup, eventGroup: IEventGroup) {
+    this.eventGroupApiService
+      .update(eventGroup.id, editedEventGroup)
+      .subscribe({
+        next: (value) => {
+          eventGroup.groupName = editedEventGroup.groupName;
+          this.toaster.success('Updated successfully');
+        },
+      });
   }
 
   private updateGroupLine(
@@ -211,15 +217,14 @@ export class EventLinesComponent implements OnInit {
     });
   }
 
-
-
   editGroup(eventGroup: IEventGroup) {
     var dialog = this.dialog.open(EventGroupEditDialog, {
       data: eventGroup,
     });
 
     dialog.afterClosed().subscribe((result: any) => {
-      if (result==null|| result.data == null || result.data.action == null) return;
+      if (result == null || result.data == null || result.data.action == null)
+        return;
       if (result.data.action == 'Delete') {
         this.openDeleteGroupDialog(eventGroup);
       } else if (result.data.action == 'Save') {
@@ -234,12 +239,44 @@ export class EventLinesComponent implements OnInit {
     });
 
     dialog.afterClosed().subscribe((result: any) => {
-      if (result==null|| result.data == null || result.data.action == null) return;
+      if (result == null || result.data == null || result.data.action == null)
+        return;
       if (result.data.action == 'Delete') {
         this.openDeleteLineDialog(eventGroupLine);
       } else if (result.data.action == 'Save') {
         this.updateGroupLine(result.data.data, eventGroupLine);
       }
     });
+  }
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousIndex == event.currentIndex) return;
+
+    moveItemInArray(
+      this.eventSub.getValue()?.eventGroups!,
+      event.previousIndex,
+      event.currentIndex
+    );
+    this.reorderGroups(event.previousIndex, event.currentIndex);
+  }
+
+  reorderGroups(previousIndex: number, currentIndex: number) {
+    let minIndex, maxIndex;
+    var event = this.eventSub.getValue();
+    if (previousIndex > currentIndex) {
+      minIndex = currentIndex;
+      maxIndex = previousIndex;
+    } else {
+      minIndex = previousIndex;
+      maxIndex = currentIndex;
+    }
+    for (var i = minIndex; i <= maxIndex; i++) {
+      var e = event?.eventGroups![i]!;
+      e.order = i+1;
+      this.eventGroupApiService.update(e.id, e).subscribe({
+        next: (value) => {
+          this.toaster.success('Updated successfully');
+        },
+      });
+    }
   }
 }

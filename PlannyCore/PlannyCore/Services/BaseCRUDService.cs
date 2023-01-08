@@ -16,8 +16,8 @@ namespace PlannyCore.Services
     {
         Task<ApiResponse<List<TModel>>> GetAllAsync();
         Task<ApiResponse<TModel>> GetByIdAsync(int id);
-        Task<ApiResponse<int?>> AddOrUpdateAsync(TModel model);
-        Task<ApiResponse<int?>> AddAsync(TModel model);
+        Task<ApiResponse<TModel>> AddOrUpdateAsync(TModel model);
+        Task<ApiResponse<TModel>> AddAsync(TModel model);
         Task<ApiResponse<int?>> UpdateAsync(TModel model);
         Task<ApiResponse<bool>> DeleteAsync(int id);
     }
@@ -81,7 +81,7 @@ namespace PlannyCore.Services
             }
         }
 
-        public async Task<ApiResponse<int?>> AddOrUpdateAsync(TModel model)
+        public async Task<ApiResponse<TModel>> AddOrUpdateAsync(TModel model)
         {
             try
             {
@@ -97,29 +97,27 @@ namespace PlannyCore.Services
                     result = await _dbRepository.AddAsync(result);
 
                 }
-
-                var testResult = await Task.FromResult(result.Id);
                 await AfterAdd(result);
-                return ApiResponse<int?>.SuccessResult(testResult);
+                return ApiResponse<TModel>.SuccessResult(_mapper.Map<T,TModel>(result));
             }
             catch (Exception ex) when (ex is FailException || ex is ValidationException || ex is ArgumentException)
             {
-                return ApiResponse<int?>.ErrorResult(message: ex.Message, statusCode: HttpStatusCode.BadRequest);
+                return ApiResponse<TModel>.ErrorResult(message: ex.Message, statusCode: HttpStatusCode.BadRequest);
             }
             catch (Exception ex) when (ex is ErrorException)
             {
                 //LoggingManager.Error(ex.ToString());
-                return ApiResponse<int?>.ErrorResult(message: ex.Message);
+                return ApiResponse<TModel>.ErrorResult(message: ex.Message);
             }
             catch (Exception ex)
             {
                 //LoggingManager.Error(ex.ToString());
-                return ApiResponse<int?>.ErrorResult(message: ex.Message);
+                return ApiResponse<TModel>.ErrorResult(message: ex.Message);
             }
 
         }
 
-        public async Task<ApiResponse<int?>> AddAsync(TModel model)
+        public async Task<ApiResponse<TModel>> AddAsync(TModel model)
         {
             try
             {
@@ -127,23 +125,22 @@ namespace PlannyCore.Services
                 result.UpdatedDate = DateTime.Now;
                 result.CreatedDate = DateTime.Now;
                 result = await _dbRepository.AddAsync(result);
-                var testResult = await Task.FromResult(result.Id);
                 await AfterAdd(result);
-                return ApiResponse<int?>.SuccessResult(testResult);
+                return ApiResponse<TModel>.SuccessResult(_mapper.Map<T,TModel>(result));
             }
             catch (Exception ex) when (ex is FailException || ex is ValidationException || ex is ArgumentException)
             {
-                return ApiResponse<int?>.ErrorResult(message: ex.Message, statusCode: HttpStatusCode.BadRequest);
+                return ApiResponse<TModel>.ErrorResult(message: ex.Message, statusCode: HttpStatusCode.BadRequest);
             }
             catch (Exception ex) when (ex is ErrorException)
             {
                 //LoggingManager.Error(ex.ToString());
-                return ApiResponse<int?>.ErrorResult(message: ex.Message);
+                return ApiResponse<TModel>.ErrorResult(message: ex.Message);
             }
             catch (Exception ex)
             {
                 //LoggingManager.Error(ex.ToString());
-                return ApiResponse<int?>.ErrorResult(message: ex.Message);
+                return ApiResponse<TModel>.ErrorResult(message: ex.Message);
             }
 
         }

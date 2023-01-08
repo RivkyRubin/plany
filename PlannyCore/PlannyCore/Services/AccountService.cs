@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using PlannyCore.Controllers;
 using PlannyCore.Data.Entities.Identity;
+using PlannyCore.Enums;
 using PlannyCore.Models;
 using System.Net;
 using System.Text.Encodings.Web;
@@ -14,7 +17,7 @@ namespace PlannyCore.Services
         Task<ApiResponse<bool>> ResendPassword(ApplicationUser user, string email);
         Task<ApiResponse<bool>> SendEmailConfirmation(ApplicationUser user);
 
-        Task GenerateConfirmationEmail(ApplicationUser user);
+        Task<ApiResponse<bool>> GenerateConfirmationEmail(ApplicationUser user);
     }
     public class AccountService : IAccountService
     {
@@ -22,23 +25,30 @@ namespace PlannyCore.Services
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
         private readonly ISystemParameterService _systemParameterService;
+        private readonly ILogger<AccountService> _logger;
         public AccountService(UserManager<ApplicationUser> userManager,
             IConfiguration configuration, IEmailSender emailSender,
-                        ISystemParameterService systemParameterService)
+                        ISystemParameterService systemParameterService,
+                       ILogger<AccountService> logger)
         {
             _userManager = userManager;
             _configuration = configuration;
             _emailSender = emailSender;
             _systemParameterService = systemParameterService;
+            _logger = logger;
         }
 
-        public async Task GenerateConfirmationEmail(ApplicationUser user)
+        public async Task<ApiResponse<bool>> GenerateConfirmationEmail(ApplicationUser user)
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var url = _configuration["ApplicationURL:EmailConfirmationURL"];
             url = url + "?userId=" + user.Id + "&code=" + HttpUtility.UrlEncode(code);
-            var body = $"Please click on the link to activate your account: \n {url}";
-            await _emailSender.SendEmailAsync(user.Email, "Email Confirmation", body);
+            var emailTemplate = _systemParameterService.GetSystemParameterValue(SystemParameterEnum.ConfirmAccountHtmlTemplate);
+            if (string.IsNullOrEmpty(emailTemplate))
+                return ApiResponse<bool>.ErrorResult(message: $"{SystemParameterEnum.ConfirmAccountHtmlTemplate.ToString()} is empty");
+            emailTemplate = emailTemplate.Replace("{Param1}", url);
+            await _emailSender.SendEmailAsync(user.Email, "Email Confirmation", emailTemplate);
+            return ApiResponse<bool>.SuccessResult(true);
 
         }
         public async Task<ApiResponse<bool>> ConfirmEmail(string userId, string code)
@@ -82,7 +92,7 @@ namespace PlannyCore.Services
                 }
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                var emailTemplate = _systemParameterService.GetSystemParameterValue("ForgotPasswordHtmlTemplate");
+                var emailTemplate = _systemParameterService.GetSystemParameterValue(SystemParameterEnum.ForgotPasswordHtmlTemplate);
                 if (string.IsNullOrEmpty(emailTemplate))
                     return ApiResponse<bool>.ErrorResult(message: "email template is empty");
                 var url = _configuration["ApplicationURL:PasswordResetURL"];
@@ -104,12 +114,13 @@ namespace PlannyCore.Services
         {
             try
             {
-                await GenerateConfirmationEmail(user);
-                return ApiResponse<bool>.SuccessResult(true);
+                var res = await GenerateConfirmationEmail(user);
+                return res;
             }
             catch (Exception ex)
             {
-                return ApiResponse<bool>.ErrorResult(message: ex.Message);
+                _logger.LogError("SendEmailConfirmation error", ex);
+                return ApiResponse<bool>.ErrorResult(message: ex.Message, ApiResponseCodeEnum.ErrorSendingEmail);
             }
         }
     }

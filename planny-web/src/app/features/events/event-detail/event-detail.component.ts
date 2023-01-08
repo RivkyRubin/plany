@@ -15,6 +15,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponent } from '../dialogs/delete-dialog/delete-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToasterService } from 'src/app/core/services/toaster/toaster.service';
+import { Meta } from '@angular/platform-browser';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { EventService } from '../services/event/event.service';
 @Component({
   selector: 'app-event-detail',
   templateUrl: './event-detail.component.html',
@@ -32,13 +35,17 @@ export class EventDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private eventAPIService: EventAPIService,
+    public eventService:EventService,
     private eventTypeAPIService: EventTypeApiService,
     public dialog: MatDialog,
     private toaster: ToasterService,
-    private router: Router
+    private router: Router,
+    private meta: Meta,
+    public authService:AuthService
   ) {}
 
   ngOnInit(): void {
+   
     // this.snackBar.open('Deleted successfully',undefined, {
     //   duration: 2000,
     // });
@@ -49,6 +56,7 @@ export class EventDetailComponent implements OnInit {
 
   }
 
+  
   getEvent(): Observable<IEvent> {
     return this.eventAPIService.getEventWithDetails(this.id);
   }

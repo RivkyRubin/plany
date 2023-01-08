@@ -1,7 +1,7 @@
 <!-- <img src="/assets/images/events.jpg" class="w-100" /> -->
 
-<div class="content  text-center h-100 ">
-  <div class="p-3 col-xs-12 col-sm-6">
+<div class="content  text-center h-100 "    [ngClass]="{'splash-screen-was-shown':splashScreeWasShown}">
+  <div class="col-xs-12 col-sm-6 col-md-4 title-container">  
     <span class="text-center align-self-center p-4 title"> Manage<br/> your<br/> events! </span>
   </div>
 </div>
@@ -24,8 +24,8 @@
       <div class="row step">
         <div class="col-sm-6 align-self-center text-center">
           You can choose an initial template!<br />
-          you'll have a ready list (ex wedding or picnic)<br />
-          which you can edit for excpecially your needs!
+          planning a wedding or a picninc? what else?<br />
+          let us help you with ready lists!
         </div>
         <div class="col-sm-6 img-col">
           <img src="/assets/images/select.svg" class="w-100" />
@@ -38,7 +38,7 @@
       <div class="row step mb-0"> 
         <div class="col-sm-6 align-self-center text-center order-sm-2">
           You will be able to share your friends, <br />
-          You or they will decide what to prepare for the event,<br />
+          assign them tasks to do!<br />
           let them be a part of your event!
         </div>
         <div class="col-sm-6 img-col order-sm-1">

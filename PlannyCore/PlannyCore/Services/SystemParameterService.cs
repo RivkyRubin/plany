@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using PlannyCore.Dal;
 using PlannyCore.Data.Entities;
+using PlannyCore.Enums;
 using PlannyCore.Models;
 
 namespace PlannyCore.Services
 {
     public interface ISystemParameterService : IBaseCRUDService<SystemParameter, SystemParameterModel>
     {
-        string GetSystemParameterValue(string name);
+        string GetSystemParameterValue(SystemParameterEnum name);
     }
     public class SystemParameterService : BaseCRUDService<SystemParameter, SystemParameterModel>, ISystemParameterService
     {
@@ -20,7 +21,7 @@ namespace PlannyCore.Services
             this.mapper = mapper;
         }
 
-        public string GetSystemParameterValue(string name)
+        public string GetSystemParameterValue(SystemParameterEnum name)
         {
             return _systemParameterRepository.GetSystemParameterValue(name);
         }

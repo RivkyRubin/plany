@@ -3,12 +3,14 @@ import { IEventGroup } from "./event-group.model";
 
 export interface IEvent{
     id: number;
-    name: string;
+    name?: string;
     date: Date;
+    location: string;
     eventSource: IEvent;
     eventType: IEvent;
     eventSourceID?: number;
     eventTypeID?:number;
     isTemplate?: boolean;
-    eventGroups?:IEventGroup[]
+    eventGroups?:IEventGroup[];
+    shareId:string;
 }

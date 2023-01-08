@@ -16,6 +16,7 @@ import {
 import { EventAPIService } from '../services/event/event-api.service';
 import { IEvent } from '../models/event.model';
 import { EventTypeApiService } from '../services/event-type/event-type-api.service';
+import { EventService } from '../services/event/event.service';
 
 @Component({
   selector: 'app-event-list',
@@ -62,7 +63,8 @@ export class EventListComponent implements OnInit {
 
   constructor(
     private eventAPIService: EventAPIService,
-    private eventTypeAPIService: EventTypeApiService
+    private eventTypeAPIService: EventTypeApiService,
+    public eventService:EventService
   ) {}
 
   ngOnInit(): void {

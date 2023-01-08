@@ -5,4 +5,5 @@ export interface IEventGroup{
     eventId?:number;
     groupName: string;
     eventGroupLines?:IEventGroupLine[];
+    order?:number;
 }

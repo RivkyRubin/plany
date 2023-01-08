@@ -1,15 +1,14 @@
 <div *ngIf="event$ | async as event" class="flex-parent">
-  <div class="flex-content">
-    <div class="row m-0">
-      <div class=" col-sm-6">
-        <img
-          src="/assets/images/{{ (event$ | async)?.eventType?.name || 'custom' }}.jpg"
-          class="card-img-top p-3"
-          alt="..."
-        />
+  <div class="flex-content"  [style.background-image]="'url(/assets/images/lg/' +eventService.getEventTypeName(event) + '.jpg)'" > 
+    <div class="p-3 h-100">
+      <div class="text-center glass-bg col-sm-6 h-100 d-flex fade-down">
+        <div class="align-self-center text-center w-100 details  ">
+         
+        <div >Date: {{ event.date | date: "d/MM/yyyy H:mm" }}</div>
+        <div *ngIf="event.location">Location: {{ event.location}}</div>
+        <div *ngIf="this.authService.hasRole('Admin')">Is Template: {{ event.isTemplate}}</div>
+        
       </div>
-      <div class="col text-center">
-        <h3>{{ event.date | date: "d/MM/yyyy H:mm" }}</h3>
       </div>
     </div>
   </div>

@@ -30,16 +30,21 @@ export class AuthService {
   currentUser = {};
   isLoggedIn = new BehaviorSubject(false);
   isExternalLoggedIn = new BehaviorSubject(false);
+  returnUrl: string;
   constructor(
     private http: HttpClient,
     public router: Router,
     private externalAuthService: SocialAuthService,
-    private toaster:ToasterService
+    private toaster: ToasterService
   ) {
     this.externalAuthService.authState.subscribe((user) => {
       console.log(user);
       this.extAuthChangeSub.next(user);
     });
+  }
+  hasRole(role: string): boolean {
+    var roles = this.getRoles();
+    return this.isLoggedIn.getValue() && roles.includes(role);
   }
   signUp(user: User): Observable<any> {
     let api = `${environment.apiKey}/account/register`;
@@ -50,22 +55,42 @@ export class AuthService {
     this.isLoggedIn.next(true);
   }
 
-  signIn(user: User) {
+  setRolesFromSignIn(data: ILoginResponse) {
+    localStorage.setItem('roles', JSON.stringify(data.roles));
+  }
+
+  getRoles(): string[] {
+    var roles = localStorage.getItem('roles');
+    if (roles == null) return [];
+    return JSON.parse(roles);
+  }
+
+  showResendConfirmationEmailMessage(message:string,email:string)
+  {
+    this.toaster.error(
+      message,
+      10000,
+      'Resend confirmation email',
+      () => {
+        this.sendEmailConfirmation(email).subscribe();
+      }
+    );
+  }
+
+  signIn(user: User, returnUrl: string) {
     return this.http
       .post<any>(`${environment.apiKey}/account/signin`, user)
       .subscribe((res: IApiResponse<ILoginResponse>) => {
         if (res.statusCode == 200) {
           this.setTokenFromSignIn(res.data);
+          this.setRolesFromSignIn(res.data);
           this.getUserProfile().subscribe((res) => {
             console.log('current user:' + JSON.stringify(res));
             this.currentUser = res;
-            this.router.navigate(['events']);
+            this.router.navigate([returnUrl]);
           });
-        }
-        else if(res.responseCode==ApiResponseCode.EmailNotConfirmed){
-          this.toaster.error(res.message, 10000, 'Resend confirmation email', () => {
-            this.sendEmailConfirmation(user.email).subscribe();
-          });
+        } else if (res.responseCode == ApiResponseCode.EmailNotConfirmed) {
+          this.showResendConfirmationEmailMessage(res.message,user.email)
         }
         // else this.toaster.error('from here '+res.message);
       });
@@ -82,12 +107,19 @@ export class AuthService {
   // }
   doLogout() {
     let removeToken = localStorage.removeItem('token');
-    if (removeToken == null) { 
-          this.signOutExternal();
+    if (removeToken == null) {
+      this.signOutExternal();
       this.isLoggedIn.next(false);
-      this.router.navigate(['login']);
- 
+      this.isExternalLoggedIn.next(false);
+      this.redirectToLogin();
     }
+  }
+  redirectToLogin() {
+    let returnUrl = this.router.url;
+    if (returnUrl.indexOf('returnUrl') > -1) returnUrl = '';
+    this.router.navigate(['login'], {
+      queryParams: { returnUrl: this.router.url },
+    });
   }
   // User profile
   getUserProfile(): Observable<any> {
@@ -96,7 +128,6 @@ export class AuthService {
       map((res) => {
         return res || {};
       })
-      
     );
   }
 
@@ -109,8 +140,7 @@ export class AuthService {
     this.externalAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
   };
   public signOutExternal = () => {
-    if(this.isExternalLoggedIn.getValue())
-    this.externalAuthService.signOut();
+    if (this.isExternalLoggedIn.getValue()) this.externalAuthService.signOut();
   };
 
   public externalLogin = (body: IExternalAuth) => {
@@ -120,10 +150,10 @@ export class AuthService {
         next: (res: IApiResponse<ILoginResponse>) => {
           if (res.statusCode == 200) {
             this.setTokenFromSignIn(res.data);
+            this.setRolesFromSignIn(res.data);
             this.isExternalLoggedIn.next(true);
             this.router.navigate(['events']);
-          }
-          else{
+          } else {
             this.toaster.error(res.message);
           }
         },
@@ -132,53 +162,92 @@ export class AuthService {
           this.signOutExternal();
         },
       });
-    };
+  };
 
-    sendPasswordResetLink(email:string) {
-      return this.http.get<IApiResponse<boolean>>(`${environment.apiKey}/account/ForgotPassword`, {
-        params: {
-          email: email
+  sendPasswordResetLink(email: string) {
+    return this.http
+      .get<IApiResponse<boolean>>(
+        `${environment.apiKey}/account/ForgotPassword`,
+        {
+          params: {
+            email: email,
+          },
         }
-      }).pipe(map(res => res.data),retry(1), catchError(this.handleError));;
-    }
-  
-    //ResetPassword : API
-    resetUserPassword(body:ResetPassword) {
-      return this.http.post<IApiResponse<boolean>>(`${environment.apiKey}/account/ResetPassword`, body).pipe(map(res => {
-        if(res.statusCode!=200)
-      {
-        this.toaster.error(res.message);
-        return false;
-      }
-      else{
-        this.toaster.success('The Password changed successfully');
-        return true;
-      }
-      }),retry(1), catchError(this.handleError));
-    }
+      )
+      .pipe(
+        map((res) => res.data),
+        retry(1),
+        catchError(this.handleError)
+      );
+  }
 
-    sendEmailConfirmation(emailAddress:string) {
-      return this.http.get<IApiResponse<boolean>>(`${environment.apiKey}/account/SendEmailConfirmation/`+ emailAddress).pipe(map(res => {
-        if(res.statusCode!=200)
-      {
-        this.toaster.error(res.message);
-        return false;
-      }
-      else{
-        this.toaster.success('Email was sent, please check your inbox');
-        return true;
-      }
-      }),retry(1), catchError(this.handleError));
-    }
+  //ResetPassword : API
+  resetUserPassword(body: ResetPassword) {
+    return this.http
+      .post<IApiResponse<boolean>>(
+        `${environment.apiKey}/account/ResetPassword`,
+        body
+      )
+      .pipe(
+        map((res) => {
+          if (res.statusCode != 200) {
+            this.toaster.error(res.message);
+            return false;
+          } else {
+            this.toaster.success('The Password changed successfully');
+            return true;
+          }
+        }),
+        retry(1),
+        catchError(this.handleError)
+      );
+  }
 
-    confirmAccount(body:ConfirmAccount) {
-      return this.http.get<IApiResponse<boolean>>(`${environment.apiKey}/account/ConfirmEmail`, {
-        params: {
-          userId: body.UserID,
-          code: body.Code
+  sendEmailConfirmation(emailAddress: string) {
+    return this.http
+      .get<IApiResponse<boolean>>(
+        `${environment.apiKey}/account/SendEmailConfirmation/` + emailAddress
+      )
+      .pipe(
+        map((res) => {
+           if(res.statusCode == 200) {
+            this.toaster.success('Email was sent, please check your inbox');
+            return true;
+          } 
+          else if(res.responseCode == ApiResponseCode.UserNowFound)
+          {
+            this.toaster.error("User not found");
+            return false;
+          }
+          else if(res.responseCode == ApiResponseCode.ErrorSendingEmail)
+          {
+            this.toaster.error("Error sending email");
+            return false;
+          }
+           else  {
+            this.toaster.error(res.message);
+            return false;
+          } 
+         
+        }),
+        retry(1),
+        catchError(this.handleError)
+      );
+  }
+
+  confirmAccount(body: ConfirmAccount) {
+    return this.http
+      .get<IApiResponse<boolean>>(
+        `${environment.apiKey}/account/ConfirmEmail`,
+        {
+          params: {
+            userId: body.UserID,
+            code: body.Code,
+          },
         }
-      }).pipe(retry(1), catchError(this.handleError));
-    }
+      )
+      .pipe(retry(1), catchError(this.handleError));
+  }
 
   // Error
   handleError(error: HttpErrorResponse) {

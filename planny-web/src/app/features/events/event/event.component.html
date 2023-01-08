@@ -1,5 +1,7 @@
 <div *ngIf="eventSub$ | async as event" class="flex-parent">
+  <div class="flex-narrow position-relative">
   <h1 class="text-center title">{{ event.name }}</h1>
+  </div>
   <!-- <div class="row m-0">
         <div class="col-md-3 col-sm-6">
           <img
@@ -19,8 +21,11 @@
   </div>
   <div class="flex-narrow">
     <div class="footer row bg-light">
-      <div class="col footer-action btn btn-link" (click)="openDeleteDialog()">
-        <fa-icon [icon]="faTrash"></fa-icon>
+      <div class="col footer-action btn btn-link">
+        <a [routerLink]="['./details']" class="text-decoration-none text-reset"
+        >
+        <fa-icon [icon]="faDetails"></fa-icon>
+        </a>
       </div>
       <div class="col footer-action btn btn-link" (click)="openEditDialog()">
         <fa-icon [icon]="faEdit"></fa-icon>

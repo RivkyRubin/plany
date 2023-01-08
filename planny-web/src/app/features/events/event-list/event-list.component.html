@@ -8,14 +8,14 @@
       <div class="card text-center position-relative">
         <app-figure-img
           [src]="
-            '/assets/images/' + (event?.eventType?.name || 'custom') + '.jpg'
+            '/assets/images/sm/' + eventService.getEventTypeName(event) + '.jpg'
           "
-          [alt]="'/assests/images/custom.jpg'"
+          [alt]="'/assests/images/sm/Custom.jpg'"
         ></app-figure-img>
         <div class="card-body">
           <h2 class="card-title">{{ event.name }}</h2>
           <div class="position-absolute event-type">
-            {{ event?.eventType?.name || "Custom" }}
+            {{ eventService.getEventTypeName(event) }}
           </div>
           <p class="card-text">{{ event.date | date : "d/MM/yyyy H:mm" }}</p>
 

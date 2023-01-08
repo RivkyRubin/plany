@@ -4,6 +4,8 @@ using PlannyCore.DomainModel.Exceptions;
 using PlannyCore.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using PlannyCore.Controllers;
+using log4net;
 
 namespace PlannyCore.Filters
 {
@@ -18,6 +20,9 @@ namespace PlannyCore.Filters
         /// <param name="context"></param>
         public override void OnException(ExceptionContext context)
         {
+            var logger = (ILogger<CustomExceptionFilter>)context.HttpContext.RequestServices.
+            GetService(typeof(ILogger<CustomExceptionFilter>));
+
             var exceptionType = context.Exception.GetType();
             var statusCode = context.HttpContext.Response.StatusCode;
             if (exceptionType == typeof(UnauthorizedAccessException))
@@ -40,7 +45,7 @@ namespace PlannyCore.Filters
                 message = context.Exception.Message;
                 status = HttpStatusCode.InternalServerError;
             }
-
+            logger.LogError($"OnException. message: {message}, status: {status}");
             context.HttpContext.Response.StatusCode = (int)status;
 
             // Return Object result

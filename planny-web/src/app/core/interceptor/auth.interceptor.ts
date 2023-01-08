@@ -12,6 +12,7 @@ import { ToasterService } from '../services/toaster/toaster.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  isLoginOut = false;
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -47,7 +48,14 @@ export class AuthInterceptor implements HttpInterceptor {
               //this.toaster.error('from interseptor ' + err.message);
               return;
             }
+            if(!this.isLoginOut)
+            {
+              this.isLoginOut=true;
+              setInterval(()=>{
+                this.isLoginOut = false;
+              },2000)
             this.authService.doLogout();
+            }
           }
         },
       }),

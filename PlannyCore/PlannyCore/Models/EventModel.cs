@@ -20,6 +20,9 @@ namespace PlannyCore.Models
 
         public int? EventSourceID { get; set; }
         public int? EventTypeID { get; set; }
+        [StringLength(40)]
+        public string? Location { get; set; }
+        public Guid ShareId { get; set; }
 
     }
 }

@@ -1,16 +1,22 @@
 @import "~bootstrap/scss/mixins/_breakpoints";
+.splash-screen-was-shown .title{
+  animation-delay: 2s !important;
+}
 .content {
   font-weight: bold;
   color: var(--primaryLightColor);
-  background-image: url(/assets/images/events.jpg);
+  background-image: url(/assets/images/lg/Events.jpg);
   background-size: cover;
   background-attachment: fixed;
+  .title-container{
+    padding:75px 1rem 1rem 1rem;
+  }
   .title {
     font-size: 5rem;
     line-height: 3.5rem;
     animation: 
      letterSpace 1.5s forwards;
-      animation-delay: 2s;
+       animation-delay: 0s;
      //letter-spacing: 10px;
      opacity: 0;
     ;
@@ -68,6 +74,9 @@
   xl: 1200px,
   xxl: 1400px
 )) {
+  .title-container{
+    padding-top: 20px !important;
+  }
  
   .card{
     border:none;

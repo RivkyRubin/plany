@@ -151,10 +151,17 @@ namespace PlannyCore.Migrations
                     b.Property<bool?>("IsTemplate")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Location")
+                        .HasMaxLength(40)
+                        .HasColumnType("VARCHAR(40)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("VARCHAR(40)");
+
+                    b.Property<Guid>("ShareId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -290,6 +297,9 @@ namespace PlannyCore.Migrations
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("Order")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");

@@ -6,6 +6,7 @@ import { catchError, of, Subscription } from 'rxjs';
 import { IApiResponse } from 'src/app/core/models/apiResponse.model';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ToasterService } from 'src/app/core/services/toaster/toaster.service';
+import { ApiResponseCode } from '../../enums/statusCode.enum';
 import { IExternalAuth } from '../../models/external-auth';
 @Component({
   selector: 'app-signup',
@@ -49,7 +50,10 @@ export class SignupComponent implements OnInit ,OnDestroy{
         {
         this.toastr.success('user registered successfully');
           this.signupForm.reset();
-          this.router.navigate(['login']);
+          this.authService.redirectToLogin();
+        }
+        else if (res.responseCode == ApiResponseCode.ErrorSendingEmail) {
+          this.authService.showResendConfirmationEmailMessage("User registered but an error accured while sending confirmation email",this.signupForm.value.email);
         }
         else this.toastr.error(res.message);
       },

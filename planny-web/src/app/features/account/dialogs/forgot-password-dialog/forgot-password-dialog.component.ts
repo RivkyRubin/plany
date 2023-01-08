@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ToasterService } from 'src/app/core/services/toaster/toaster.service';
@@ -13,7 +14,8 @@ export class ForgotPasswordDialogComponent implements OnInit {
   isDisabled:boolean= false;
   constructor(public authService: AuthService,
     private toastrService: ToasterService,
-    private router: Router) { }
+    private router: Router,
+    private dialogRef: MatDialogRef<ForgotPasswordDialogComponent>) { }
     forgetPasswordModel = {
       Email: ""
     }
@@ -28,6 +30,7 @@ onSubmit(event: any, form: NgForm) {
           this.toastrService.success('The Password reset link has been successfully sent to your registered email');
           this.isDisabled = false;
           form.form.reset();
+          this.dialogRef.close();
         }
         else {
                     this.isDisabled = false;

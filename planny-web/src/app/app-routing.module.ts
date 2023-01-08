@@ -5,7 +5,9 @@ import { NotLoggedInGuard } from './core/guards/not-logged-in.guard';
 import { AccountActivationComponent } from './features/account/account-activation/account-activation.component';
 import { PasswordResetComponent } from './features/account/password-reset/password-reset.component';
 import { AboutComponent } from './features/general/about/about.component';
+import { AdminComponent } from './features/general/admin/admin.component';
 import { HomeComponent } from './features/general/home/home.component';
+import { TermsOfUseComponent } from './features/general/terms-of-use/terms-of-use.component';
 import { SigninComponent } from './shared/components/signin/signin.component';
 import { SignupComponent } from './shared/components/signup/signup.component';
 import { UserProfileComponent } from './shared/components/user-profile/user-profile.component';
@@ -18,7 +20,11 @@ const routes: Routes = [
   { path: 'account-activation', component: AccountActivationComponent },
   { path: 'signup', component: SignupComponent, canActivate: [NotLoggedInGuard] },
   { path: 'about', component: AboutComponent },
+  { path: 'terms-of-use', component: TermsOfUseComponent },
   { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuard] },
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard],data: {
+    role: 'Admin'
+  } },
   {
     path: 'events',
     loadChildren: () => import('./features/events/events.module').then(x => x.EventsModule)

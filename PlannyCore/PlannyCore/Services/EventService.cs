@@ -142,7 +142,7 @@ namespace PlannyCore.Services
             }
         }
 
-        public new async Task<ApiResponse<int?>> AddAsync(EventModel model)
+        public new async Task<ApiResponse<EventModel>> AddAsync(EventModel model)
         {
              if (model.EventSourceID.HasValue)
             {
@@ -156,6 +156,7 @@ namespace PlannyCore.Services
                     else model.EventTypeID = srcEventID.EventTypeID;
                 }
             }
+            model.ShareId = Guid.NewGuid();
             return await base.AddAsync(model);
         }
 

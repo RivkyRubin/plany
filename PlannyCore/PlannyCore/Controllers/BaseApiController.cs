@@ -48,7 +48,7 @@ namespace PlannyCore.Controllers
         //[SwaggerResponse(400, type: null, description: "Bad Request")]
         //[SwaggerResponse(500, type: null, description: "Internal Server Error")]
         [ProducesResponseType(typeof(ApiResponse<int?>), 200)]
-        public async Task<ActionResult> Put(int id,[FromBody] TModel model)
+        public virtual async  Task<ActionResult> Put(int id, [FromBody] TModel model)
         {
             var result = await _service.UpdateAsync(model);
             return new OkObjectResult(result);
@@ -58,10 +58,10 @@ namespace PlannyCore.Controllers
         //[SwaggerResponse(400, type: null, description: "Bad Request")]
         //[SwaggerResponse(500, type: null, description: "Internal Server Error")]
         [ProducesResponseType(typeof(ApiResponse<int?>), 200)]
-        public async Task<ActionResult> Post([FromBody] TModel model)
+        public virtual async Task<ActionResult> Post([FromBody] TModel model)
         {
             var userId = HttpContext.User.FindFirstValue("UserId");
-            if (model is IUserIdModel) 
+            if (model is IUserIdModel)
             {
                 (model as IUserIdModel)!.UserId = int.Parse(userId);
             }
@@ -77,6 +77,13 @@ namespace PlannyCore.Controllers
         {
             var entity = await _service.DeleteAsync(id);
             return new OkObjectResult(entity.Data);
+        }
+
+        protected async Task<bool> HasRole(string role)
+        {
+            var name = _userManager.GetUserName(HttpContext.User);
+            var user = await _userManager.FindByEmailAsync(name);
+            return await _userManager.IsInRoleAsync(user, role);
         }
     }
 }

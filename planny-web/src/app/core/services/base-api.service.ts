@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { offset } from '@popperjs/core';
-import { catchError, map, Observable, of, retry, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse, IApiResponse } from '../models/apiResponse.model';
 
@@ -25,23 +25,23 @@ export abstract class BaseApiService<T> {
   getAll(): Observable<T[]> {
     return this.http
       .get<IApiResponse<T[]>>(this.apiURL + '/'+this.actionName)
-      .pipe(map(res => res.data),retry(1));
+      .pipe(map(res => res.data));
   }
   // HttpClient API get() method => Fetch employee
   getByID(id: any): Observable<T> {
     return this.http
       .get<IApiResponse<T>>(this.apiURL + '/'+this.actionName+'/' + id)
-      .pipe(map(res => res.data),retry(1));
+      .pipe(map(res => res.data));
   }
   // HttpClient API post() method => Create employee
-  create(entity: T): Observable<number> {
+  create(entity: T): Observable<T> {
     return this.http
-      .post<IApiResponse<number>>(
+      .post<IApiResponse<T>>(
         this.apiURL + '/'+this.actionName,
         JSON.stringify(entity),
         this.httpOptions
       )
-      .pipe(map(res => res.data),retry(1), catchError(this.handleError));
+      .pipe(map(res => res.data), catchError(this.handleError));
   }
 
   update(id: any, entity: T): Observable<T> {
@@ -51,13 +51,13 @@ export abstract class BaseApiService<T> {
         JSON.stringify(entity),
         this.httpOptions
       )
-      .pipe(map(res => res.data),retry(1), catchError(this.handleError));
+      .pipe(map(res => res.data), catchError(this.handleError));
   }
 
   delete(id: any) {
     return this.http
       .delete<boolean>(this.apiURL + '/'+this.actionName+'/' + id, this.httpOptions)
-      .pipe(retry(1), tap(data=>{
+      .pipe( tap(data=>{
          if(data==false)
          {
            throw new Error('delete failed');

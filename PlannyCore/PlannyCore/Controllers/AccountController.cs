@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Elasticsearch.Net.Specification.RollupApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,8 @@ using PlannyCore.Enums;
 using PlannyCore.Models;
 using PlannyCore.Models.Account;
 using PlannyCore.Services;
+using System.Collections;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
@@ -21,6 +24,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Web;
 using System.Xml.Linq;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace PlannyCore.Controllers
 {
@@ -38,6 +42,7 @@ namespace PlannyCore.Controllers
         private readonly ITokenService _tokenService;
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -48,7 +53,8 @@ namespace PlannyCore.Controllers
             IPasswordHasher passwordHasher,
             ITokenService tokenService,
             IAccountService accountService,
-            IMapper mapper)
+            IMapper mapper,
+                RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -60,9 +66,11 @@ namespace PlannyCore.Controllers
             _tokenService = tokenService;
             _accountService = accountService;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
 
         [HttpPost("Register")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
@@ -71,9 +79,11 @@ namespace PlannyCore.Controllers
             var result = await _userManager.CreateAsync(user, request.Password);
             if (result.Succeeded)
             {
-                await _accountService.GenerateConfirmationEmail(user);
-                _logger.LogInformation("User created a new account with password.");
-
+                var res = await _accountService.SendEmailConfirmation(user);
+                if (res.StatusCode != 200)
+                {
+                    return new OkObjectResult(res);
+                }      
                 // add user 
                 //var refreshUser = _context.UserRefreshTokens.SingleOrDefault(u => u.UserName == request.Email);
                 //if (refreshUser != null) return new OkObjectResult(ApiResponse<Object>.ErrorResult(System.Net.HttpStatusCode.Conflict, message: "User name already exists."));
@@ -86,12 +96,12 @@ namespace PlannyCore.Controllers
 
                 //await _context.SaveChangesAsync();
                 //var refreshUser = _context.UserRefreshTokens.SingleOrDefault(u => u.UserName == request.Email);
-                return new OkObjectResult(ApiResponse<UserRefreshToken>.SuccessResult(new UserRefreshToken() { UserName = request.Email, Password = request.Password }));
+                return new OkObjectResult(ApiResponse<bool>.SuccessResult(true));
             }
             var message = "Could not register user.";
             if (result.Errors.Any())
                 message = result.Errors.First().Description;
-            return new OkObjectResult(ApiResponse<Object>.ErrorResult(message: message));
+            return new OkObjectResult(ApiResponse<bool>.ErrorResult(message: message));
         }
 
         [HttpPost("RefreshToken")]
@@ -131,6 +141,8 @@ namespace PlannyCore.Controllers
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(LoginRequest request)
         {
+            _logger.LogError("cs:" + _config["ConnectionStrings:DefaultConnection"]);
+            _logger.LogError("jwt:" + _config["Jwt:Key"]);
             _logger.LogError("Hello, {Name}!", request.Email);
             Console.WriteLine("SignIn!");
             var user = await _userManager.FindByEmailAsync(request.Email);
@@ -143,7 +155,8 @@ namespace PlannyCore.Controllers
                 var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
                 if (result.Succeeded)
                 {
-                    var claims = new[]
+                    var roles = await _userManager.GetRolesAsync(user);
+                    var claims = new List<Claim>
                     {
                             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -152,6 +165,10 @@ namespace PlannyCore.Controllers
                             //new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                             new Claim("UserId",user.Id.ToString())
                         };
+                    foreach (var userRole in roles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, userRole));
+                    }
 
                     var token = _tokenService.GenerateAccessToken(claims);
                     var newRefreshToken = _tokenService.GenerateRefreshToken();
@@ -164,7 +181,8 @@ namespace PlannyCore.Controllers
                     return new OkObjectResult(ApiResponse<LoginResponse>.SuccessResult(new LoginResponse
                     {
                         Token = token,
-                        ID = user.Id
+                        ID = user.Id,
+                        Roles = roles.ToList()
                     }));
                 }
                 else if (result.IsNotAllowed)
@@ -223,15 +241,21 @@ namespace PlannyCore.Controllers
             //check for the Locked out account
             //var token = await _tokenService.GenerateToken(user);
             //return Ok(new AuthResponseDto { Token = token, IsAuthSuccessful = true });
-            var claims = new[]
+            var roles = await _userManager.GetRolesAsync(user) ?? new List<string>();
+            var claims = new List<Claim>()
                        {
                             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             new Claim(JwtRegisteredClaimNames.Email, user.Email),
                             new Claim(ClaimTypes.Name, user.Email),
                             //new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                            new Claim("UserId",user.Id.ToString())
+                            new Claim("UserId",user.Id.ToString()),
+
                         };
+            foreach (var userRole in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
 
             var token = _tokenService.GenerateAccessToken(claims);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
@@ -245,7 +269,8 @@ namespace PlannyCore.Controllers
             {
                 Token = token,
                 //RefreshToken = newRefreshToken,
-                ID = user.Id
+                ID = user.Id,
+                Roles = roles.ToList()
             }));
         }
 
@@ -307,7 +332,7 @@ namespace PlannyCore.Controllers
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return new OkObjectResult(ApiResponse<bool>.ErrorResult(message: "user not found"));
+                return new OkObjectResult(ApiResponse<bool>.ErrorResult(message: "user not found", ApiResponseCodeEnum.UserNowFound));
 
             var res = await _accountService.SendEmailConfirmation(user);
             return new OkObjectResult(res);

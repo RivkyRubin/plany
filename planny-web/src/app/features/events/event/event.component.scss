@@ -3,11 +3,26 @@
       text-align: center;
       font-size: 30px;
       color: var(--primaryColor);
-      animation: fadeUp .5s
+      animation: fadeUp .5s;
+      border-radius:0px;
     }
+    .footer-action:hover{
+      background-color:var(--primaryLightColor);
+      border:1px solid #fff;
+      fa-icon{
+        color:var(--primaryDarkColor);
+      }
+    }
+  
 
     border-top: 1px solid var(--primaryColor);
   }
+.position-absolute{
+  height: 100%;
+  top: 45%;
+  padding: 0px 15px;
+}
+  // .flex-content{overflow: visible !important;}
   
   @keyframes fadeIn {
       0% { opacity: 0; }

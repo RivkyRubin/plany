@@ -8,6 +8,7 @@ import { EventAPIService } from '../services/event/event-api.service';
 import {
   faInfoCircle
 } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from 'src/app/core/services/auth.service';
 @Component({
   selector: 'app-event-create',
   templateUrl: './event-create.component.html',
@@ -27,10 +28,12 @@ faInfo=faInfoCircle;
   });
   isLinear = false;
 
-  constructor( private fb: FormBuilder, private eventAPIService:EventAPIService,private router: Router,      private toaster: ToasterService,) { 
+  constructor( private fb: FormBuilder, private eventAPIService:EventAPIService,private router: Router,      private toaster: ToasterService,public authService:AuthService) { 
     this.createForm = this.fb.group({
       name: [''],
       date: [this.currentDate()],
+      location: ['',[Validators.maxLength(40)]],
+      isTemplate: [null]
     });
   }
 
@@ -44,7 +47,7 @@ faInfo=faInfoCircle;
       {
         next:(value) => {
           this.toaster.success('Event Created!');
-        this.router.navigate(['events/event',value]);
+        this.router.navigate(['events/event',value.id]);
         }
       });
   } 

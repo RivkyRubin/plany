@@ -9,10 +9,23 @@
   border-top: 1px solid var(--primaryColor);
   background-color: var(--primaryLightColor);
 }
+.flex-content{
+    background-size: cover;
+     background-position: center;
+    animation: bgFadeIn 0.5s linear ;
+    .details{
+      text-shadow: 2px 3px 5px rgba(0,0,0,0.5);
+    color: var(--primaryLightColor);
+    font-size: 20px;
+    }
+}
+.glass-bg{
+  border-radius: 10px;
+}
 
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+@keyframes bgFadeIn {
+  0% {   background-position: top; filter: grayscale(100%); }
+    100% {   background-position: center; filter: grayscale(0%); }
   }
 
   @keyframes fadeUp {

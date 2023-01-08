@@ -27,6 +27,8 @@ import { AccountActivationComponent } from './features/account/account-activatio
 import { environment } from 'src/environments/environment';
 import { AboutComponent } from './features/general/about/about.component';
 import { InView } from './shared/directives/in-view.directive';
+import { AdminComponent } from './features/general/admin/admin.component';
+import { TermsOfUseComponent } from './features/general/terms-of-use/terms-of-use.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +43,9 @@ import { InView } from './shared/directives/in-view.directive';
     PasswordResetComponent,
     AccountActivationComponent,
     AboutComponent,
-    InView
+    InView,
+    AdminComponent,
+    TermsOfUseComponent
     ],
   imports: [
     MatDialogModule,

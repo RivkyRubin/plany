@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PlannyCore;
@@ -25,7 +26,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using static PlannyCore.Filters.ValidatorActionFilter;
-
+using Newtonsoft.Json;
 //using Microsoft.Extensions.Logging.Log4Net.AspNetCore;
 //ConfigureLogging();
 
@@ -45,7 +46,7 @@ builder.Services.AddControllers(config =>
     config.Filters.Add(new CustomExceptionFilter());
     config.Filters.Add(new ValidatorActionFilter());
     config.Filters.Add(new AsyncActionFilterExample());
-});
+});//.AddNewtonsoftJson();
 builder.Services.AddCors(options => options.AddPolicy("Cors", builder =>
 {
     builder
@@ -97,12 +98,16 @@ builder.Services.AddScoped(typeof(IBaseCRUDService<,>), typeof(BaseCRUDService<,
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IAccountService, AccountService>();
+builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<IAdminRepository, AdminRepository>();
 builder.Services.AddTransient<IEventRepository, EventRepository>();
 builder.Services.AddTransient<IEventTypeRepository, EventTypeRepository>();
+builder.Services.AddTransient<IEventGroupRepository, EventGroupRepository>();
 builder.Services.AddTransient<ISystemParameterRepository, SystemParameterRepository>();
 builder.Services.AddTransient<ISystemParameterService, SystemParameterService>();
 builder.Services.AddTransient<IEventService, EventService>();
+builder.Services.AddTransient<IEventGroupService, EventGroupService>();
 builder.Services.AddTransient<IEventTypeService, EventTypeService>();
 Console.WriteLine("cs: " + builder.Configuration["ConnectionStrings:DefaultConnection"]);
 Console.WriteLine("key: " + builder.Configuration["Jwt:Key"]);
@@ -122,6 +127,8 @@ builder.Services
                     {
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
@@ -146,10 +153,13 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(
         )
     .AddEntityFrameworkStores<ApplicationDbContext>()
        .AddDefaultTokenProviders();
+
+
 builder.Services.AddAutoMapper(typeof(Program));
 //builder.Services.AddAuthorization();
 if (builder.Environment.EnvironmentName == "Development")
 {
+  
     builder.Host.UseSerilog((ctx, lc) => lc
            .WriteTo.Console()
             .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(ctx.Configuration["ElasticConfiguration:Uri"]))
@@ -165,7 +175,18 @@ if (builder.Environment.EnvironmentName == "Development")
 }
 else
     builder.Logging.AddLog4Net();
+
 var app = builder.Build();
+
+//if we want to migrate database on startup
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+
+//    var context = services.GetRequiredService<ApplicationDbContext>();
+//    context.Database.Migrate();
+//}
+
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

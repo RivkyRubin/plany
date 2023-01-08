@@ -21,5 +21,9 @@ namespace PlannyCore.Data.Entities
         public bool? IsTemplate { get; set; }
         public int? EventSourceID { get; set; }
         public int? EventTypeID { get; set; }
+        [StringLength(40)]
+        [Column(TypeName = "VARCHAR(40)")]
+        public string? Location { get; set; }
+        public Guid ShareId { get; set; }
     }
 }

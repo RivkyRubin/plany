@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { SplashScreenStateService } from 'src/app/core/services/splash-screen-state.service';
 
 @Component({
@@ -7,13 +8,15 @@ import { SplashScreenStateService } from 'src/app/core/services/splash-screen-st
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-
-  constructor( private splashScreenStateService: SplashScreenStateService) { }
+  splashScreeWasShown =false;
+  constructor( private splashScreenStateService: SplashScreenStateService) {
+   }
 
   ngOnInit(): void {
-  //   setTimeout(() => {
-  //     this.splashScreenStateService.stop();
-  //  }, 4000);
+    this.splashScreenStateService.subscribe(res => {
+      if(res == true)
+      this.splashScreeWasShown=true;
+   });
   }
   onAppear()
   {

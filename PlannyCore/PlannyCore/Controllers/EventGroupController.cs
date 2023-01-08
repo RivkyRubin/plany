@@ -14,13 +14,31 @@ namespace PlannyCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EventGroupController : BaseApiController<EventGroup,EventGroupModel>
+    public class EventGroupController : BaseApiController<EventGroup, EventGroupModel>
     {
-        private readonly IBaseCRUDService<EventGroup,EventGroupModel> _service;
+        private readonly IEventGroupService _service;
 
-        public EventGroupController(IBaseCRUDService<EventGroup,EventGroupModel> service, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager):base(service, userManager,signInManager)
+        public EventGroupController(IEventGroupService service, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : base(service, userManager, signInManager)
         {
             this._service = service;
+        }
+
+        public override async Task<ActionResult> Post([FromBody] EventGroupModel model)
+        {
+            if (!model.Order.HasValue)
+            {
+                var maxOrder = _service.GetMaxGroupOrder(model.EventId);
+                model.Order = (maxOrder ?? 0) + 1;
+            }
+            return await base.Post(model);
+        }
+
+        [HttpGet("GetMaxGroupOrder/{eventId}")]
+        public async Task<ActionResult<ApiResponse<int?>>> GetMaxGroupOrder(int eventId)
+        {
+            var maxOrder = _service.GetMaxGroupOrder(eventId);
+            var result = ApiResponse<int?>.SuccessResult(maxOrder);
+            return new OkObjectResult(result);
         }
     }
 }

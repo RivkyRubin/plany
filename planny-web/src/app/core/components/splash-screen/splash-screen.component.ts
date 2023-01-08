@@ -15,6 +15,7 @@ readonly ANIMATION_DURATION = 1;
   ngOnInit(): void {
      // Somewhere the stop method has been invoked
    this.splashScreenStateService.subscribe(res => {
+    if(res == false)
     this.hideSplashAnimation();
  });
   }

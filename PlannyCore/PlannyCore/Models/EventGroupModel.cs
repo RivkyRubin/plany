@@ -9,6 +9,7 @@ namespace PlannyCore.Models
         [StringLength(40)]
         [Required]
         public string GroupName { get; set; }
+        public int? Order { get; set; }
         public virtual List<EventGroupLineModel>? EventGroupLines { get; set; }
     }
 }
