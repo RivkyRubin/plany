@@ -62,7 +62,9 @@ a:not(.btn):hover,a:not(.btn):active,a:not(.btn){
 }
 /* Importing Bootstrap SCSS file. */
 @import "~bootstrap/scss/bootstrap";
-
+html{
+  overflow: hidden;
+}
 html,
 body {
   height: 100%;
