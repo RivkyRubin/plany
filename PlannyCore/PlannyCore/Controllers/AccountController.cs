@@ -141,10 +141,6 @@ namespace PlannyCore.Controllers
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(LoginRequest request)
         {
-            _logger.LogError("cs:" + _config["ConnectionStrings:DefaultConnection"]);
-            _logger.LogError("jwt:" + _config["Jwt:Key"]);
-            _logger.LogError("Hello, {Name}!", request.Email);
-            Console.WriteLine("SignIn!");
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user != null)
             {
@@ -191,8 +187,6 @@ namespace PlannyCore.Controllers
 
             }
             else return new OkObjectResult(ApiResponse<EventModel>.ErrorResult("user doesn't exist", ApiResponseCodeEnum.UserNowFound));
-            return new OkObjectResult(ApiResponse<EventModel>.ErrorResult("user failed to login"));
-
         }
 
         [HttpGet("UserProfile")]
@@ -203,7 +197,6 @@ namespace PlannyCore.Controllers
             var user = await _userManager.FindByEmailAsync(name);
             //var user = await _userManager.GetUserAsync(HttpContext.User);
             var userProfile = _mapper.Map<UserProfile>(user);
-
             return Ok(userProfile);
 
         }
@@ -292,37 +285,8 @@ namespace PlannyCore.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         public async Task<ActionResult> ResetPassword(ResetPasswordModel model)
         {
-            //OperationResult<string> result = new OperationResult<string>();
-            var user = await _userManager.FindByIdAsync(model.UserID);
-            if (user != null)
-            {
-                IdentityOptions options = new IdentityOptions();
-                var proivder = options.Tokens.PasswordResetTokenProvider;
-                //bool isValid = await _userManager.VerifyUserTokenAsync(user, proivder, UserManager<IdentityUser>.ResetPasswordTokenPurpose , HttpUtility.UrlDecode(model.Code));
-                bool isValid = await _userManager.VerifyUserTokenAsync(user, proivder, UserManager<IdentityUser>.ResetPasswordTokenPurpose, model.Code);
-                if (isValid)
-                {
-                    var resetPassword = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
-
-                    if (resetPassword.Succeeded)
-                    {
-                        return new OkObjectResult(ApiResponse<bool>.SuccessResult(true));
-
-                    }
-                    else
-                    {
-                        return new OkObjectResult(ApiResponse<bool>.ErrorResult(message: "reset password falied"));
-
-                    }
-                }
-                else
-                {
-                    return new OkObjectResult(ApiResponse<bool>.ErrorResult(message: "reset link expired"));
-                }
-            }
-            else return new OkObjectResult(ApiResponse<bool>.ErrorResult(message: "user not found"));
-
-
+            var res = await _accountService.ResetPassword(model);
+            return new OkObjectResult(res);
         }
 
         [AllowAnonymous]

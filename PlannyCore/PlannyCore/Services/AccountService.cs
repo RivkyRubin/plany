@@ -5,6 +5,7 @@ using PlannyCore.Controllers;
 using PlannyCore.Data.Entities.Identity;
 using PlannyCore.Enums;
 using PlannyCore.Models;
+using PlannyCore.Models.Account;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Web;
@@ -18,6 +19,7 @@ namespace PlannyCore.Services
         Task<ApiResponse<bool>> SendEmailConfirmation(ApplicationUser user);
 
         Task<ApiResponse<bool>> GenerateConfirmationEmail(ApplicationUser user);
+        Task<ApiResponse<bool>> ResetPassword(ResetPasswordModel model);
     }
     public class AccountService : IAccountService
     {
@@ -51,6 +53,38 @@ namespace PlannyCore.Services
             return ApiResponse<bool>.SuccessResult(true);
 
         }
+
+        public async Task<ApiResponse<bool>> ResetPassword(ResetPasswordModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserID);
+            if (user != null)
+            {
+                IdentityOptions options = new IdentityOptions();
+                var proivder = options.Tokens.PasswordResetTokenProvider;
+                //bool isValid = await _userManager.VerifyUserTokenAsync(user, proivder, UserManager<IdentityUser>.ResetPasswordTokenPurpose , HttpUtility.UrlDecode(model.Code));
+                bool isValid = await _userManager.VerifyUserTokenAsync(user, proivder, UserManager<IdentityUser>.ResetPasswordTokenPurpose, model.Code);
+                if (isValid)
+                {
+                    var resetPassword = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+
+                    if (resetPassword.Succeeded)
+                    {
+                        return ApiResponse<bool>.SuccessResult(true);
+
+                    }
+                    else
+                    {
+                        return ApiResponse<bool>.ErrorResult("Reset password falied", ApiResponseCodeEnum.ResetPasswordFailed);
+
+                    }
+                }
+                else
+                {
+                    return ApiResponse<bool>.ErrorResult("Reset link expired", ApiResponseCodeEnum.ResetPasswordLinkExpirted);
+                }
+            }
+            else return ApiResponse<bool>.ErrorResult(message: "User not found", ApiResponseCodeEnum.UserNowFound);
+        }
         public async Task<ApiResponse<bool>> ConfirmEmail(string userId, string code)
         {
 
@@ -58,7 +92,7 @@ namespace PlannyCore.Services
             IdentityOptions options = new IdentityOptions();
             if (userId == null || code == null)
             {
-                return ApiResponse<bool>.ErrorResult( "invalid url",statusCode:HttpStatusCode.BadRequest);
+                return ApiResponse<bool>.ErrorResult( "Invalid url",statusCode:HttpStatusCode.BadRequest);
             }
             var proivder = options.Tokens.EmailConfirmationTokenProvider;
 
@@ -120,7 +154,7 @@ namespace PlannyCore.Services
             catch (Exception ex)
             {
                 _logger.LogError("SendEmailConfirmation error", ex);
-                return ApiResponse<bool>.ErrorResult(message: ex.Message, ApiResponseCodeEnum.ErrorSendingEmail);
+                return ApiResponse<bool>.ErrorResult(ex.Message, ApiResponseCodeEnum.ErrorSendingEmail);
             }
         }
     }
