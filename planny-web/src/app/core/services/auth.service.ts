@@ -65,16 +65,10 @@ export class AuthService {
     return JSON.parse(roles);
   }
 
-  showResendConfirmationEmailMessage(message:string,email:string)
-  {
-    this.toaster.error(
-      message,
-      10000,
-      'Resend confirmation email',
-      () => {
-        this.sendEmailConfirmation(email).subscribe();
-      }
-    );
+  showResendConfirmationEmailMessage(message: string, email: string) {
+    this.toaster.error(message, 10000, 'Resend confirmation email', () => {
+      this.sendEmailConfirmation(email).subscribe();
+    });
   }
 
   signIn(user: User, returnUrl: string) {
@@ -90,7 +84,7 @@ export class AuthService {
             this.router.navigate([returnUrl]);
           });
         } else if (res.responseCode == ApiResponseCode.EmailNotConfirmed) {
-          this.showResendConfirmationEmailMessage(res.message,user.email)
+          this.showResendConfirmationEmailMessage(res.message, user.email);
         }
         // else this.toaster.error('from here '+res.message);
       });
@@ -115,10 +109,11 @@ export class AuthService {
     }
   }
   redirectToLogin() {
-    let returnUrl = this.router.url;
+    console.log('redirected to login');
+    let returnUrl = window.location.pathname; //this.router.url;
     if (returnUrl.indexOf('returnUrl') > -1) returnUrl = '';
     this.router.navigate(['login'], {
-      queryParams: { returnUrl: this.router.url },
+      queryParams: { returnUrl: returnUrl },
     });
   }
   // User profile
@@ -190,12 +185,18 @@ export class AuthService {
       )
       .pipe(
         map((res) => {
-          if (res.statusCode != 200) {
-            this.toaster.error(res.message);
-            return false;
-          } else {
+          if (res.statusCode == 200) {
             this.toaster.success('The Password changed successfully');
             return true;
+          } else {
+            if (res.statusCode == ApiResponseCode.ResetPasswordFailed) {
+              this.toaster.error('Reset password failed');
+            } else if (
+              res.statusCode == ApiResponseCode.ResetPasswordLinkExpirted
+            )
+              this.toaster.error('Link expired');
+            else this.toaster.error(res.message);
+            return false;
           }
         }),
         retry(1),
@@ -210,25 +211,19 @@ export class AuthService {
       )
       .pipe(
         map((res) => {
-           if(res.statusCode == 200) {
+          if (res.statusCode == 200) {
             this.toaster.success('Email was sent, please check your inbox');
             return true;
-          } 
-          else if(res.responseCode == ApiResponseCode.UserNowFound)
-          {
-            this.toaster.error("User not found");
+          } else if (res.responseCode == ApiResponseCode.UserNowFound) {
+            this.toaster.error('User not found');
             return false;
-          }
-          else if(res.responseCode == ApiResponseCode.ErrorSendingEmail)
-          {
-            this.toaster.error("Error sending email");
+          } else if (res.responseCode == ApiResponseCode.ErrorSendingEmail) {
+            this.toaster.error('Error sending email');
             return false;
-          }
-           else  {
+          } else {
             this.toaster.error(res.message);
             return false;
-          } 
-         
+          }
         }),
         retry(1),
         catchError(this.handleError)

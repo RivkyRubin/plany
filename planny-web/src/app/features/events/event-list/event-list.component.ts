@@ -24,39 +24,11 @@ import { EventService } from '../services/event/event.service';
   styleUrls: ['./event-list.component.scss'],
 })
 export class EventListComponent implements OnInit {
-  numbers: Observable<number[]> = of([1, 2, 3], [4, 5, 6]);
   isEmptyList = false;
   events$: Observable<IEvent[]>;
   eventsSub$: BehaviorSubject<IEvent[]> = new BehaviorSubject<IEvent[]>([]);
   faPlus = faPlus;
   isReady = false;
-  //   getEvents():Observable<IEvent[]>{
-  //     var eventsBase$ =  this.eventAPIService.getAll();
-  //     return  eventsBase$
-  //     .pipe(
-  //     map(events=>{
-  //       if(events.length==0)
-  //       this.isEmptyList=true;
-  //        events.map((event)=>{
-  //         if(event.isTemplate)
-  //         {
-  //           event.eventType = event;
-  //           return event;
-  //         }
-  //         if(event.eventTypeID==null)
-  //         return event;
-  //          return this.eventAPIService.getByID(event.eventTypeID).pipe(map(eventType=>{
-  //             console.log("event"+eventType);
-  //             event.eventType = eventType;
-  //             return event;
-  //         })).subscribe();
-  //       })
-
-  // return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  //     })
-  //     )
-  //   }
-
   getNumber(number: number): Observable<number> {
     return of(number * 2);
   }
@@ -76,30 +48,5 @@ export class EventListComponent implements OnInit {
         this.isReady = true;
       },
     });
-
-    of([1, 2, 3])
-      .pipe(
-        tap((value) => console.log('my first tap' + JSON.stringify(value))),
-        switchMap((value) => {
-          return forkJoin(
-            value.map((val) => {
-              // return val*2;
-              return of(3).pipe(
-                map((v) => {
-                  return 'v:' + v + ' val:' + val;
-                })
-              );
-            })
-          );
-        }),
-        map((val) => {
-          console.log('my second map' + JSON.stringify(val));
-          return val;
-        }),
-        tap((value) => console.log('my second tap' + JSON.stringify(value)))
-      )
-      .subscribe({
-        next: (value) => console.log('my final val:' + JSON.stringify(value)),
-      });
   }
 }

@@ -39,7 +39,7 @@ export class AccountActivationComponent implements OnInit {
         this.loading = false;
         if (res.statusCode == 200) {
           this.toastrService.success("your account was confirmed");
-          this.authService.redirectToLogin();
+          this.router.navigate(['login']);
         }
         else {
           this.toastrService.error(res.message);

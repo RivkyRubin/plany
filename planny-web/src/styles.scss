@@ -1,10 +1,10 @@
-  // @use '@angular/material' as mat;
-  @import "~bootstrap/scss/mixins/_breakpoints";
+// @use '@angular/material' as mat;
+@import "~bootstrap/scss/mixins/_breakpoints";
 :root {
-  --primaryColor: #FB2576;//hsl(185, 57%, 35%); //#26848C
-  --primaryColorRGB:251, 37, 118;
-  --primaryLightColor:#fff6f9; //#cfe2e4;
-  --primaryDarkColor:#ad0646;
+  --primaryColor: #fb2576; //hsl(185, 57%, 35%); //#26848C
+  --primaryColorRGB: 251, 37, 118;
+  --primaryLightColor: #fff6f9; //#cfe2e4;
+  --primaryDarkColor: #ad0646;
   --secondaryColor: hsl(0, 0%, 22%);
   --textOnPrimary: hsl(0, 0%, 100%);
   --textOnSecondary: hsl(0, 0%, 90%);
@@ -18,20 +18,23 @@ body {
   min-height: 100%;
 }
 
-h1.title{
+h1.title {
   font-size: 50px;
-    font-weight: 800;
-    line-height: 72px;
-    margin: 0 0 24px;
-    color:var(--primaryColor);
-    text-align: center;
+  font-weight: 800;
+  line-height: 72px;
+  margin: 0 0 24px;
+  color: var(--primaryColor);
+  text-align: center;
 }
 
-a:not(.btn):hover,a:not(.btn):active,a:not(.btn){
-  color:var(--primaryColor) !important;
+a:not(.btn):not(.btn-primary):hover,
+a:not(.btn):not(.btn-primary):active,
+a:not(.btn):not(.btn-primary)
+ {
+  color: var(--primaryColor) !important;
 }
 .mat-tooltip {
-  /* your own custom styles here */ 
+  /* your own custom styles here */
   /* e.g. */
   background-color: var(--primaryColor);
 }
@@ -41,28 +44,27 @@ a:not(.btn):hover,a:not(.btn):active,a:not(.btn){
 .mat-checkbox-indeterminate.mat-primary .mat-checkbox-background,
 .mat-checkbox-checked.mat-primary .mat-checkbox-background {
   background-color: var(--primaryColor) !important;
-  color:#fff Imp !important;
-  border-color:var(--primaryColor) !important;
+  color: #fff Imp !important;
+  border-color: var(--primaryColor) !important;
 }
-.btn-link{
-  color:var(--primaryColor) !important;
+.btn-link {
+  color: var(--primaryColor) !important;
 }
-.btn-outline-primary{
-  border-color:var(--primaryColor) !important;
-  color:var(--primaryColor) !important;
-
+.btn-outline-primary {
+  border-color: var(--primaryColor) !important;
+  color: var(--primaryColor) !important;
 }
-.btn-outline-primary.active{
-    --bs-btn-active-bg: var(--primaryColor) !important;
-    color:#fff !important;
+.btn-outline-primary.active {
+  --bs-btn-active-bg: var(--primaryColor) !important;
+  color: #fff !important;
 }
-.btn-outline-primary:hover{
-  background-color:var(--primaryColor) !important;
-  color:#fff !important;
+.btn-outline-primary:hover {
+  background-color: var(--primaryColor) !important;
+  color: #fff !important;
 }
 /* Importing Bootstrap SCSS file. */
 @import "~bootstrap/scss/bootstrap";
-html{
+html {
   overflow: hidden;
 }
 html,
@@ -74,6 +76,11 @@ body {
   // font-family: Roboto, "Helvetica Neue", sans-serif;
   font-family: "ShanderaRegular", "Helvetica Neue", sans-serif;
 }
+
+  #credential_picker_container,#credential_picker_iframe {
+    //hide google login popup
+    display: none;
+  }
 
 
 // .flex-parent {
@@ -108,104 +115,101 @@ body {
 // }
 
 .mat-ink-bar {
-  background-color: var(--primaryColor) !important;}
-
-.mat-dialog-container{
-  position:relative;
+  background-color: var(--primaryColor) !important;
 }
 
-    .mat-simple-snackbar {
-      font-size: 1.2rem;
-    }
-    .mat-snack-bar-container
-    {
-      .mat-button-wrapper{
-        color:rgb(205, 205, 205);
-      }
-    }
-    .mat-snack-bar-container.warning {
-      background-color: rgb(255, 102, 0) !important;
-    }
-    .mat-snack-bar-container.error {
-      background-color: rgb(255, 0, 0) !important;
-    }
-    .mat-snack-bar-container.success {
-      background-color: var(--primaryColor) !important;
-    }
-    
-  
+.mat-dialog-container {
+  position: relative;
+}
 
+.mat-simple-snackbar {
+  font-size: 1.2rem;
+}
+.mat-snack-bar-container {
+  .mat-button-wrapper {
+    color: rgb(205, 205, 205);
+  }
+}
+.mat-snack-bar-container.warning {
+  background-color: rgb(255, 102, 0) !important;
+}
+.mat-snack-bar-container.error {
+  background-color: rgb(255, 0, 0) !important;
+}
+.mat-snack-bar-container.success {
+  background-color: var(--primaryColor) !important;
+}
 
 @font-face {
   font-family: "Ubuntu";
-  src: local("Ubuntu"), url(./assets/fonts/Ubuntu-Regular.ttf) format("truetype");
+  src: local("Ubuntu"),
+    url(./assets/fonts/Ubuntu-Regular.ttf) format("truetype");
 }
-
-
-
 
 // .mat-typography {
 //   font: 400 14px/20px "ShanderaRegular", "Helvetica Neue", sans-serif;
 // }
 
 * {
-  font-family: "Ubuntu", sans-serif !important; 
+  font-family: "Ubuntu", sans-serif !important;
   /* Add !important to overwrite all elements */
 }
 
-.display-1{
+.display-1 {
   font-size: calc(1.625rem + 4.5vw) !important;
   font-weight: 300 !important;
-  line-height: 1.2 !important; 
+  line-height: 1.2 !important;
 }
 
-.glass-bg{
+.glass-bg {
   /* From https://css.glass */
-background: rgba(255, 255, 255, 0.2) !important;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-backdrop-filter: blur(5px) !important;
--webkit-backdrop-filter: blur(5px) !important;
-border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-@include media-breakpoint-down(sm,(
-  xs: 0,
-  sm: 576px,
-  md: 768px,
-  lg: 992px,
-  xl: 1200px,
-  xxl: 1400px
-)) {
-  h1.title{
+@include media-breakpoint-down(
+  sm,
+  (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px,
+    xxl: 1400px,
+  )
+) {
+  h1.title {
     line-height: 1;
     margin-bottom: 10px !important;
   }
 }
 
-.fade-down{
+.fade-down {
   animation: fadeDown 1s;
 }
 
-
 @keyframes fadeDown {
   0% {
-  filter: alpha(opacity=0);
-  opacity: 0;
-  -webkit-transform: translateY(-50%);
-  -moz-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  -o-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
-100% {
-  filter: alpha(opacity=100);
-  opacity: 1;
-  -webkit-transform: translateY(0);
-  -moz-transform: translateY(0);
-  -ms-transform: translateY(0);
-  -o-transform: translateY(0);
-  transform: translateY(0);
-}
+    filter: alpha(opacity=0);
+    opacity: 0;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+  100% {
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+  }
 }
 
 textarea:focus,
@@ -223,8 +227,9 @@ input[type="url"]:focus,
 input[type="search"]:focus,
 input[type="tel"]:focus,
 input[type="color"]:focus,
-.uneditable-input:focus {   
+.uneditable-input:focus {
   border-color: rgba(var(--primaryColorRGB), 0.8);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(var(--primaryColorRGB), 0.6);
-   outline: 0 none;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset,
+    0 0 8px rgba(var(--primaryColorRGB), 0.6);
+  outline: 0 none;
 }

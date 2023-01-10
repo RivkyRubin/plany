@@ -55,7 +55,7 @@ export class PasswordResetComponent implements OnInit {
         if (res == true) {
           this.resetPasswordModel.reset();
           this.resetPasswordModel.enable();
-          this.authService.redirectToLogin();
+          this.router.navigate(['login']);
         }
         else {
           this.resetPasswordModel.reset();

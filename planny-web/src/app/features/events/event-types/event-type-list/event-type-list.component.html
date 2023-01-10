@@ -1,4 +1,3 @@
-<div class="container-fluid">
   <mat-tab-group class="flex-narrow">
     <mat-tab label="Templates">
       <div class="row">
@@ -17,7 +16,7 @@
             <!-- <img src="/assets/images/{{eventType?.name}}.svg" class="card-img-top p-3" alt="/assets/images/birthday.jpg" onerror="this.src='/assets/images/birthday.svg';"> -->
             <app-figure-img
               [src]="'/assets/images/sm/' + eventService.getEventTypeName(eventType) + '.jpg'"
-              [alt]="'image'"
+              [alt]="eventType.name"
             ></app-figure-img>
           </div>
         </div>
@@ -40,11 +39,10 @@
             <!-- <img src="/assets/images/{{eventType?.name}}.svg" class="card-img-top p-3" alt="/assets/images/birthday.jpg" onerror="this.src='/assets/images/birthday.svg';"> -->
             <app-figure-img
             [src]="'/assets/images/sm/' + eventService.getEventTypeName(event) + '.jpg'"
-              [alt]="'/assets/images/sm/Custom.jpg'"
+              [alt]="event.name"
             ></app-figure-img>
           </div>
         </div>
       </div>
     </mat-tab>
   </mat-tab-group>
-</div>

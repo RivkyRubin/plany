@@ -1,26 +1,33 @@
 // @import '/src/styles.scss';
- @import '/src/app/styles/layout.scss';
+@import "/src/app/styles/layout.scss";
 .mat-stepper-horizontal {
-    margin-top: 8px;
-  }
-  
-  .mat-form-field {
-    margin-top: 16px;
-  }
+  margin-top: 8px;
+}
 
-  ::ng-deep .mat-horizontal-stepper-header{
+.mat-form-field {
+  margin-top: 16px;
+}
+
+::ng-deep {
+  .mat-horizontal-stepper-header {
     pointer-events: none !important;
+  }
+  .mat-horizontal-content-container {
+    padding: 0 0 24px 0 !important;
+  }
+  .mat-tab-body-content {
+    overflow-x: hidden !important;
+  }
 }
 
 ::ng-deep .mat-horizontal-stepper-content {
   @extend .flex-parent !optional;
 }
 
-::ng-deep .mat-horizontal-content-container
-{
+::ng-deep .mat-horizontal-content-container {
   @extend .flex-content !optional;
 }
-h2{
+h2 {
   margin-bottom: 0px !important;
   font-size: 13px !important;
   line-height: 1 !important;

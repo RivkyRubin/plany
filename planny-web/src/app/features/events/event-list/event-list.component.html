@@ -3,14 +3,14 @@
   <div class="row gy-3 pb-3" [hidden]="!isReady">
     <div
       *ngFor="let event of eventsSub$ | async"
-      class="column col-xs-6 col-sm-4 col-lg-3"
+      class="column col-12  col-sm-6 col-md-4 col-lg-3"
     >
       <div class="card text-center position-relative">
         <app-figure-img
           [src]="
             '/assets/images/sm/' + eventService.getEventTypeName(event) + '.jpg'
           "
-          [alt]="'/assests/images/sm/Custom.jpg'"
+          [alt]="event.name"
         ></app-figure-img>
         <div class="card-body">
           <h2 class="card-title">{{ event.name }}</h2>
@@ -36,7 +36,7 @@
   <h1 text-center class="title flex-narrow mb-0">My Events</h1>
   <div class="d-flex justify-content-center flex-content">
     <div class="align-self-center text-center">
-      <img src="/assets/images/empty.svg" class="" />
+      <img src="/assets/images/empty.svg" class="" alt="events list empty" />
       <h2 class=" ">Create your first event!</h2>
       <!-- <div class="position-absolute bottom-0 end-0 arrow-img">
   <img src="/assets/images/arrow.png" alt="...">
@@ -44,6 +44,6 @@
     </div>
   </div>
 </div>
-<a class="fload-add" [routerLink]="['event-create']">
+<a class="fload-add btn-primary" [routerLink]="['event-create']">
   <fa-icon [icon]="faPlus"></fa-icon>
 </a>
